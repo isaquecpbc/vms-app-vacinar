@@ -1,0 +1,32 @@
+<ion-content color="light" padding>
+  <form #form="ngForm" (ngSubmit)="login(formUser.value, formPassword.value)">
+    <ion-progress-bar type="indeterminate" *ngIf="showLoading"></ion-progress-bar>
+    <ion-grid>
+      <ion-row color="light" class="ion-justify-content-center ion-align-items-center">
+        <ion-col align-self-center size-md="6" size-lg="5" size-xs="12">
+          <figure style="text-align: center;">
+            <img src="https://storage.builderall.com//franquias/2/6477146/editor-html/9784172.png" />
+          </figure>
+          <div>
+            <h3 class="text-center">Login</h3>
+          </div>
+          <div padding>
+            <ion-item>
+              <ion-input name="email" type="text" placeholder="Usuário"
+                ngModel required #formUser="ngModel"></ion-input>
+            </ion-item>
+            <ion-item>
+              <ion-input name="password" type="password" placeholder="Senha"
+                ngModel required #formPassword="ngModel"></ion-input>
+            </ion-item>
+          </div>
+          <div padding>
+            <ion-button size="large" type="submit" [disabled]="form.invalid" expand="block">Login</ion-button>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
+</ion-content>
+
+<app-footer></app-footer>

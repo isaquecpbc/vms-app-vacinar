@@ -18,7 +18,15 @@ const routes: Routes = [
   {
     path: 'configuration',
     loadChildren: () => import('./configuration/configuration.module').then( m => m.ConfigurationPageModule)
+  },  {
+    path: 'login',
+    loadChildren: () => import('./login/login.module').then( m => m.LoginPageModule)
+  },
+  {
+    path: 'application-place',
+    loadChildren: () => import('./application-place/application-place.module').then( m => m.ApplicationPlacePageModule)
   }
+
 ];
 
 @NgModule({

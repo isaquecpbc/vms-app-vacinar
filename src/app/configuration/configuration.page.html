@@ -9,4 +9,17 @@
 
 <ion-content>
 
+  <ion-list>
+    <ion-item>
+      <ion-label>Trabalhar com dados offline</ion-label>
+      <ion-toggle slot="end" [(ngModel)]="workOffline" (ionChange)="changeOffline($event)"></ion-toggle>
+    </ion-item>
+    <ion-item *ngIf="workOffline">
+      <ion-label>
+        <p>Status da sincronização</p>
+        <ion-progress-bar [value]="progress"></ion-progress-bar>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+
 </ion-content>

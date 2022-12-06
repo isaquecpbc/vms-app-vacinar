@@ -17,4 +17,6 @@ import { ConfigurationPage } from './configuration.page';
   ],
   declarations: [ConfigurationPage]
 })
-export class ConfigurationPageModule {}
+export class ConfigurationPageModule {
+
+}
