@@ -9,7 +9,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "postinstall": "ngcc --properties es2015 browser module main --first-only --create-ivy-entry-points"
   },
   "private": true,
   "dependencies": {
@@ -29,6 +30,8 @@
     "@capacitor/preferences": "^4.0.2",
     "@capacitor/status-bar": "4.1.0",
     "@ionic/angular": "^6.1.9",
+    "@ionic/storage": "^3.0.6",
+    "@ionic/storage-angular": "^3.0.6",
     "crypto-js": "^4.1.1",
     "dexie": "^3.2.2",
     "ionicons": "^6.0.3",
