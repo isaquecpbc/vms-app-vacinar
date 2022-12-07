@@ -21,7 +21,7 @@ export class AppComponent implements OnInit, AfterViewChecked {
     private authService: AuthIntegrationService,
     private cdr: ChangeDetectorRef
   ) {
-    this.ouvirStatusLogin()
+    this.ouvirStatusLogin();
   }
 
   ngOnInit() {
