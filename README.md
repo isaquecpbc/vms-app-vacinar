@@ -1,6 +1,23 @@
 # VMS App
 
 
+## IONIC BUILD
+ionic build
+
+## Criando projeto Android
+npx cap add android
+
+## Mandando arquivos do IONIC para a pasta do Android
+npx cap copy
+
+## Abre o projeto no Android
+npx cap open android
+
+
+Incluir linha abaixo no AndroidManifest.xml
+    android:usesCleartextTraffic="true"
+
+
 
 ## Getting started
 

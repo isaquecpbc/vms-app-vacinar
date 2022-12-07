@@ -64,7 +64,7 @@ export abstract class BaseService<T extends {id: number|string}> {
 
     iniciarIndexedDb() {
         this.db = new Dexie('db-vms-app');
-        this.db.version(2).stores({
+        this.db.version(1).stores({
             [this.tableName]: 'id'
         });
         this.tableItems = this.db.table(this.tableName);
@@ -113,9 +113,7 @@ export abstract class BaseService<T extends {id: number|string}> {
             };
 
             const totalPages = Math.ceil(res.data.pagination.totalRowCount / res.data.pagination.pageSize);
-
             const limit = 5;
-            console.log(res.data.pagination, totalPages);
             const requests = [];
             for (let i = 2; i <= totalPages; i++) {
               requests.push(

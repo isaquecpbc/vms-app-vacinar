@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import jwt_decode from 'jwt-decode';
+import { Observable, Subject } from 'rxjs';
+import { LocalStorageService } from './localstorage.service';
 
 export enum TYPE {
   ERROR='error',
@@ -13,28 +15,35 @@ export enum TYPE {
   providedIn: 'root'
 })
 export class AuthIntegrationService {
-  constructor() {}
+  constructor(
+    private localStorage: LocalStorageService
+  ) {}
+  private authenticationIsValid$ = new Subject<boolean>();
 
   logout() {
-    localStorage.clear();
+    this.localStorage.clear();
   }
 
   setToken(token: string) {
-    localStorage.setItem('token', token);
+    this.localStorage.setItem('token', token);
   }
 
-  isAuthenticated() {
-    return this.tokenIsValid();
+  async isAuthenticated(): Promise<boolean> {
+    const status = await this.tokenIsValid();
+    this.authenticationIsValid$.next(status);
+
+    return status;
   }
 
-  private getToken() {
-    return localStorage.getItem('token') || '';
+  async getToken() {
+    const token = await this.localStorage.getItem('token') || '';
+    return token;
   }
 
-  private tokenIsValid() {
+  async tokenIsValid() {
     let result = false;
     try {
-      const token = this.getDecodedAccessToken(this.getToken());
+      const token = this.getDecodedAccessToken(await this.getToken());
       const date = new Date(token.exp * 1000);
       result = new Date < date;
     }
@@ -51,5 +60,9 @@ export class AuthIntegrationService {
     catch(Error) { }
 
     return result;
+  }
+
+  get statusAuthentication(): Observable<boolean> {
+    return this.authenticationIsValid$.asObservable();
   }
 }

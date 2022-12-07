@@ -5,6 +5,7 @@ import { Http, HttpOptions } from '@capacitor-community/http';
 import { from } from 'rxjs';
 import { Aplicacao } from '../models/aplicacao.model';
 import { CripytexService } from '../services/cripytex.service';
+import { AuthIntegrationService } from '../services/auth-integration.service';
 
 @Component({
   selector: 'app-application',
@@ -22,10 +23,12 @@ export class ApplicationPage implements OnInit {
     private alertController: AlertController,
     private aplicacaoService: AplicacoesService,
     private cripytex: CripytexService,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private authIntegrationService: AuthIntegrationService
   ) {}
 
   ngOnInit() {
+    this.authIntegrationService.isAuthenticated();
   }
 
   async apply(id: number, participanteNome: string) {

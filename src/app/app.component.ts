@@ -1,13 +1,12 @@
-import { AfterViewChecked, ChangeDetectorRef, Component } from '@angular/core';
+import { AfterViewChecked, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { AuthIntegrationService } from './services/auth-integration.service';
-import { ConnectionStatusService } from './services/connection-status.service';
-import { UserStatusService } from './services/user-status.service';
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
 })
-export class AppComponent implements AfterViewChecked {
+export class AppComponent implements OnInit, AfterViewChecked {
   public appPages = [
     { title: 'Local de Aplicação', url: '/application-place', icon: 'business' },
     { title: 'Aplicar', url: '/application', icon: 'eyedrop' },
@@ -21,10 +20,22 @@ export class AppComponent implements AfterViewChecked {
   constructor(
     private authService: AuthIntegrationService,
     private cdr: ChangeDetectorRef
-  ) { }
+  ) {
+    this.ouvirStatusLogin()
+  }
 
-  ngAfterViewChecked() {
-    this.isLogged = this.authService.isAuthenticated();
+  ngOnInit() {
+
+  }
+
+   ngAfterViewChecked() {
     this.cdr.detectChanges();
+  }
+
+  private ouvirStatusLogin() {
+    this.authService.statusAuthentication
+      .subscribe(
+        online => this.isLogged = online
+      )
   }
 }

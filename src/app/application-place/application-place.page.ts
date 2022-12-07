@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import { Clinica } from '../models/clinica.model';
+import { AuthIntegrationService } from '../services/auth-integration.service';
 import { ClinicasService } from '../services/clinicas.service';
 
 @Component({
@@ -17,10 +18,12 @@ export class ApplicationPlacePage implements OnInit {
   constructor(
     private clinicasService: ClinicasService,
     private router: Router,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private authIntegrationService: AuthIntegrationService
   ) { }
 
   ngOnInit() {
+    this.authIntegrationService.isAuthenticated();
   }
 
   filterApply(cep: string) {
@@ -32,7 +35,12 @@ export class ApplicationPlacePage implements OnInit {
         filters: filter,
         query: {per_page: '10'}
       }).subscribe(
-        items => this.clinicas = items,
+        items => {
+          this.clinicas = items;
+          if (!this.clinicas.length) {
+            this.presentToast('top', 'Não foi encontrado nenhum local de Aplicação');
+          }
+        },
         error => console.log('ERROR:',error),
         () => this.showLoading = false
       );

@@ -38,6 +38,8 @@ export class LoginPage implements OnInit {
       .create(userObj).subscribe(
         item => {
           this.authIntegrationService.setToken(item.token || '');
+          // TODO: Alterar para interceptor HTTP Request
+          this.authIntegrationService.isAuthenticated();
           this.router.navigate(['/application-place']);
         },
         error => {
