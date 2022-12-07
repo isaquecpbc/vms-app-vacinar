@@ -1,6 +1,7 @@
-import { Injectable } from "@angular/core";
+import { Inject, Injectable } from "@angular/core";
 import { Preferences } from '@capacitor/preferences';
 import Dexie, { Table } from "dexie";
+import { StorageService } from "./storage.service";
 
 export class Valores {
     // id!: string;
@@ -12,36 +13,19 @@ export class Valores {
     providedIn: 'root'
 })
 export class LocalStorageService {
-    private db!: Dexie;
-    private tableItems!: Table<Valores, any>;
-    tableName = 'localStorage';
+    constructor(
+        @Inject(StorageService) private storage: StorageService
+    ) { }
 
-    constructor() {
-        this.iniciarIndexedDb();
+    setItem(key: string, value: string) {
+        this.storage.set(key, value);
     }
 
-    iniciarIndexedDb() {
-        this.db = new Dexie('db-vms-app');
-        this.db.version(1).stores({
-            [this.tableName]: 'key'
-        });
-        this.tableItems = this.db.table(this.tableName);
+    getItem(keyItem: string) {
+        return this.storage.get(keyItem);
     }
 
-    async setItem(key: string, value: string) {
-        await this.tableItems.delete(key);
-        await this.tableItems.add({
-            key,
-            value
-        });
-    }
-
-    async getItem(keyItem: string) {
-        const result = await this.tableItems.where({'key': keyItem}).toArray();
-        return result ? result[0].value : '';
-    }
-
-    async clear() {
-        await this.tableItems.clear();
+    clear(keyItem: string) {
+        return this.storage.remove(keyItem);
     }
 }

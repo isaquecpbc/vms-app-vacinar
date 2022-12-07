@@ -8,6 +8,8 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ComponentsModule } from './components/components.module';
 import { HttpClientJsonpModule, HttpClientModule } from '@angular/common/http';
+import { IonicStorageModule } from '@ionic/storage-angular';
+import { Drivers } from '@ionic/storage';
 
 @NgModule({
   declarations: [
@@ -19,7 +21,11 @@ import { HttpClientJsonpModule, HttpClientModule } from '@angular/common/http';
     HttpClientJsonpModule,
     IonicModule.forRoot(),
     AppRoutingModule,
-    ComponentsModule
+    ComponentsModule,
+    IonicStorageModule.forRoot({
+      name: 'vms-app',
+      driverOrder: [Drivers.IndexedDB, Drivers.LocalStorage]
+    })
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },

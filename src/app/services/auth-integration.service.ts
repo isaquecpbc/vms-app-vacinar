@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import jwt_decode from 'jwt-decode';
 import { Observable, Subject } from 'rxjs';
+import { LocalStoragePreferencesService } from './localstorage-preferences.service';
 import { LocalStorageService } from './localstorage.service';
 
 export enum TYPE {
@@ -16,7 +17,7 @@ export enum TYPE {
 })
 export class AuthIntegrationService {
   constructor(
-    private localStorage: LocalStorageService
+    private localStorage: LocalStoragePreferencesService
   ) {}
   private authenticationIsValid$ = new Subject<boolean>();
 
@@ -28,16 +29,16 @@ export class AuthIntegrationService {
     this.localStorage.setItem('token', token);
   }
 
-  async isAuthenticated(): Promise<boolean> {
-    const status = await this.tokenIsValid();
-    this.authenticationIsValid$.next(status);
+  async isAuthenticated() {
+    const status = this.tokenIsValid();
+    this.authenticationIsValid$.next(await status);
 
     return status;
   }
 
   async getToken() {
-    const token = await this.localStorage.getItem('token') || '';
-    return token;
+    const token = await this.localStorage.getItem('token');
+    return token !== null ? `${token}` : '';
   }
 
   async tokenIsValid() {
