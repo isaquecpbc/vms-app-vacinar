@@ -83,7 +83,7 @@ export class LoginPage implements OnInit {
       system: 'auth-vms'
     } as Auth;
     this.authService
-      .create(userObj).subscribe(
+      .createWorkaround(userObj).subscribe(
         item => {
           console.log('item.token', JSON.stringify(item, null, 4));
           this.authIntegrationService.setToken(item.token || '');

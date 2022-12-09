@@ -91,7 +91,7 @@ export class ApplicationPage implements OnInit {
     if (event.target.value.length > 3) {
       this.showLoading = true;
       this.aplicacaoService
-        .get(null, {
+        .getAll({
             filters: {
               participanteNomeCodigo: event.target.value,
               comAdesao: 'yes'
