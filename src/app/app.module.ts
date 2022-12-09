@@ -10,6 +10,7 @@ import { ComponentsModule } from './components/components.module';
 import { HttpClientJsonpModule, HttpClientModule } from '@angular/common/http';
 import { IonicStorageModule } from '@ionic/storage-angular';
 import { Drivers } from '@ionic/storage';
+import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { Drivers } from '@ionic/storage';
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+    NativeStorage
   ],
   bootstrap: [AppComponent],
 })

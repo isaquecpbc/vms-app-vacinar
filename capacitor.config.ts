@@ -4,7 +4,14 @@ const config: CapacitorConfig = {
   appId: 'io.ionic.starter',
   appName: 'vms-app',
   webDir: 'www',
-  bundledWebRuntime: false
+  bundledWebRuntime: false,
+  server: {
+    cleartext: true,
+    allowNavigation:[
+      "localhost:8100/*",
+      "191.252.178.7:8012/*",
+    ]
+  }
 };
 
 export default config;
