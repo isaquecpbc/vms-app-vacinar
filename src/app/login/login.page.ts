@@ -6,6 +6,8 @@ import { AplicacoesService } from '../services/aplicacoes.service';
 import { AuthIntegrationService } from '../services/auth-integration.service';
 import { AuthService } from '../services/auth.service';
 import { LocalStoragePreferencesService } from '../services/localstorage-preferences.service';
+import { LocalStorageNativeService } from '../services/locastorage-native.service';
+import { StorageService } from '../services/storage.service';
 // import { SQLite, SQLiteObject } from '@awesome-cordova-plugins/sqlite/ngx';
 
 @Component({
@@ -18,6 +20,7 @@ export class LoginPage implements OnInit {
   formPassword: string = '';
   showLoading = false;
   dbStatus: string|null = 'INICIANDO';
+  dbStatusNative: string|null = 'INICIANDO';
 
   constructor(
     private authService: AuthService,
@@ -25,13 +28,18 @@ export class LoginPage implements OnInit {
     private toastController: ToastController,
     private localStorage: LocalStoragePreferencesService,
     private aplicacaoService: AplicacoesService,
+    private storageService: StorageService,
+    private localStorageNative: LocalStorageNativeService,
     private authIntegrationService: AuthIntegrationService
   ) { }
 
   async ngOnInit() {
-    this.localStorage.setItem('teste', 'funciona porra');
-    const token = await this.localStorage.getItem('teste');
+    this.storageService.set('teste', 'funciona porra storage');
+    this.localStorageNative.setItem('brasil', 'Meia bomba');
+    const token = await this.storageService.get('teste');
+    const brasil = await this.storageService.get('brasil');
     this.dbStatus = token;
+    this.dbStatusNative = brasil;
 
     this.aplicacaoService
       .get(null, {
@@ -53,7 +61,7 @@ export class LoginPage implements OnInit {
     })
       .then((db: SQLiteObject) => {
         this.dbStatus = 'CRIOU_DB';
-    
+
         db.executeSql('create table danceMoves(name VARCHAR(32))', [])
           .then(() => {
             console.log('Executed SQL');
@@ -63,8 +71,8 @@ export class LoginPage implements OnInit {
             console.log(e);
             this.dbStatus = 'DEU_MERDA_TABLE';
           });
-    
-    
+
+
       })
       .catch(e => {
         console.log(e);
