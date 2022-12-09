@@ -35,7 +35,7 @@ export class LoginPage implements OnInit {
       system: 'auth-vms'
     } as Auth;
     this.authService
-      .create(userObj).subscribe(
+      .createWorkaround(userObj).subscribe(
         item => {
           this.authIntegrationService.setToken(item.token || '');
           // TODO: Alterar para interceptor HTTP Request

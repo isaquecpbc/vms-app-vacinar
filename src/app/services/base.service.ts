@@ -1,5 +1,5 @@
 import { HttpClient } from "@angular/common/http";
-import { Injectable, Injector } from "@angular/core";
+import { Inject, Injectable, Injector } from "@angular/core";
 import { forkJoin, map, Observable, Subject } from "rxjs";
 import { ConnectionStatusService } from "./connection-status.service";
 import { environment } from "../../environments/environment";
@@ -12,6 +12,10 @@ export class filtersParamsRequest {
     [key: string]: string|number;
 }
 
+export class payloadParamsRequest {
+    [key: string]: string|number;
+}
+
 export class querysParamsRequest {
     [key: string]: string|number;
 }
@@ -19,6 +23,7 @@ export class querysParamsRequest {
 export class paramsRequest {
     query?: querysParamsRequest;
     filters?: filtersParamsRequest;
+    fakePayload?: payloadParamsRequest;
     aditionalId?: number|string;
 }
 
@@ -40,8 +45,8 @@ export abstract class BaseService<T extends {id: number|string}> {
 
     constructor(
         protected injector: Injector,
-        protected tableName: string,
-        protected endpoint: string,
+        @Inject(String) protected tableName: string,
+        @Inject(String) protected endpoint: string,
     ) {
         this.http = this.injector.get(HttpClient);
         this.statusConnection = this.injector.get(ConnectionStatusService);
@@ -161,18 +166,18 @@ export abstract class BaseService<T extends {id: number|string}> {
         // }
     }
 
-    get(id?: string|number|null, ...args: paramsRequest[]): Observable<T[]> {
+    get(id?: string|number|null, ...args: paramsRequest[]): Observable<T> {
         const options: HttpOptions = {
-            url: `${this.apiUrl}${this.endpoint}`,
+            url: `${this.apiUrl}${this.endpoint}` + (id ? `/${id}` : ''),
             params: {}
         };
 
-        if (args && args[0].filters) {
+        if (args && args[0].fakePayload) {
             const arrFilter = [];
-            for (const i of Object.keys(args[0].filters)) {
-                arrFilter.push(`${i}:${args[0].filters[i]}`);
+            for (const i of Object.keys(args[0].fakePayload)) {
+                arrFilter.push(`${i}:${args[0].fakePayload[i]}`);
             }
-            options.params = Object.assign({}, options.params, {'filter': arrFilter.join(';')});
+            options.params = Object.assign({}, options.params, {'_data': arrFilter.join(';')});
         }
 
         if (args && args[0].query) {
@@ -186,17 +191,72 @@ export abstract class BaseService<T extends {id: number|string}> {
 
         return from(Http.get(options))
             .pipe(
-                map (res => this.mapObject(res))
+                map (res => {
+                    return res.data as T;
+                })
             );
     }
 
-    mapObject(values: HttpResponse): T[] {
+    getAll(...args: paramsRequest[]): Observable<T[]> {
+        const options: HttpOptions = {
+            url: `${this.apiUrl}${this.endpoint}`,
+            params: {}
+        };
+
+        if (args && args[0].filters) {
+            const arrFilter = [];
+            for (const i of Object.keys(args[0].filters)) {
+                arrFilter.push(`${i}:${args[0].filters[i]}`);
+            }
+            options.params = Object.assign({}, options.params, {'filter': arrFilter.join(';')});
+        }
+
+        if (args && args[0].fakePayload) {
+            const arrFilter = [];
+            for (const i of Object.keys(args[0].fakePayload)) {
+                arrFilter.push(`${i}:${args[0].fakePayload[i]}`);
+            }
+            options.params = Object.assign({}, options.params, {'_data': arrFilter.join(';')});
+        }
+
+        if (args && args[0].query) {
+            const arrQuery = [];
+            for (const i of Object.keys(args[0].query)) {
+                // arrQuery.push(`${i}=${args[0].query[i]}`);
+                // debugger;
+                options.params = Object.assign({}, options.params, {[i]:args[0].query[i]});
+            }
+        }
+
+        return from(Http.get(options))
+            .pipe(
+                map (res => {
+                    let result: Array<T> = [];
+                    res.data.map((item: any) => result.push(item as T));
+                    return result;
+                })
+            );
+    }
+
+    mapObject(values: HttpResponse): T[]|T {
         let result: Array<T> = [];
-        values.data.map((item: any) => result.push(item as T));
+        if (Array.isArray(values.data)) {
+            values.data.map((item: any) => result.push(item as T));
+        }
+        else {
+            return values.data as T;
+        }
         return result;
     }
 
     abstract mapObjecttoOffiline(values: HttpResponse): T[];
+
+    createWorkaround(body: T): Observable<T> {
+        return this.get(null, {
+            fakePayload: body,
+            query: { _method: 'POST'}
+        });
+    }
 
     create(body: T): Observable<T> {
         const options: HttpOptions = {

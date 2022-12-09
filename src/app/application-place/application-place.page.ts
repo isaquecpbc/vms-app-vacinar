@@ -31,7 +31,7 @@ export class ApplicationPlacePage implements OnInit {
     this.showLoading = true;
 
     this.clinicasService
-      .get(null, {
+      .getAll({
         filters: filter,
         query: {per_page: '10'}
       }).subscribe(
