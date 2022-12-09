@@ -13,6 +13,8 @@ npx cap copy
 ## Abre o projeto no Android
 npx cap open android
 
+## Sincronizar arquivos
+npx cap sync
 
 Incluir linha abaixo no AndroidManifest.xml
     android:usesCleartextTraffic="true"

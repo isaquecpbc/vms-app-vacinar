@@ -1,12 +1,13 @@
 import { AfterViewChecked, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { AuthIntegrationService } from './services/auth-integration.service';
+import { DatabaseService } from './services/database.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
 })
-export class AppComponent implements OnInit, AfterViewChecked {
+export class AppComponent implements OnInit {
   public appPages = [
     { title: 'Local de Aplicação', url: '/application-place', icon: 'business' },
     { title: 'Aplicar', url: '/application', icon: 'eyedrop' },
@@ -19,7 +20,7 @@ export class AppComponent implements OnInit, AfterViewChecked {
 
   constructor(
     private authService: AuthIntegrationService,
-    private cdr: ChangeDetectorRef
+    private databaseService: DatabaseService,
   ) {
     this.ouvirStatusLogin();
   }
@@ -27,9 +28,16 @@ export class AppComponent implements OnInit, AfterViewChecked {
   ngOnInit() {
 
   }
-
-   ngAfterViewChecked() {
-    this.cdr.detectChanges();
+  async initializeApp() {
+      this.databaseService.init();
+      this.databaseService.dbReady.subscribe(isReady => {
+        if (isReady) {
+          console.log('DATABASE_CREATED!');
+          // loading.dismiss();
+          // this.statusBar.styleDefault();
+          // this.splashScreen.hide();
+        }
+      });
   }
 
   private ouvirStatusLogin() {

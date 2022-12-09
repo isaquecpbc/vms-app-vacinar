@@ -271,6 +271,13 @@ export abstract class BaseService<T extends {id: number|string}> {
             );
     }
 
+    updateWorkaround(id: number, body: T): Observable<T> {
+        return this.get(null, {
+            fakePayload: body,
+            query: { _method: 'PUT', _id: id }
+        });
+    }
+
     update(id: number, body: T): Observable<T> {
         const options: HttpOptions = {
             method: 'POST',
