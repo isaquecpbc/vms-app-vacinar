@@ -26,8 +26,9 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-
+    this.initializeApp();
   }
+
   async initializeApp() {
       this.databaseService.init();
       this.databaseService.dbReady.subscribe(isReady => {
@@ -36,6 +37,9 @@ export class AppComponent implements OnInit {
           // loading.dismiss();
           // this.statusBar.styleDefault();
           // this.splashScreen.hide();
+        }
+        else {
+          console.log('DATABASE_FUDEU!');
         }
       });
   }
