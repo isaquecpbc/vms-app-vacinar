@@ -4,7 +4,7 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'login',
+    redirectTo: 'test2dbs',
     pathMatch: 'full'
   },
   {
@@ -18,13 +18,18 @@ const routes: Routes = [
   {
     path: 'configuration',
     loadChildren: () => import('./configuration/configuration.module').then( m => m.ConfigurationPageModule)
-  },  {
+  },
+  {
     path: 'login',
     loadChildren: () => import('./login/login.module').then( m => m.LoginPageModule)
   },
   {
     path: 'application-place',
     loadChildren: () => import('./application-place/application-place.module').then( m => m.ApplicationPlacePageModule)
+  },
+  {
+    path: 'test2dbs',
+    loadChildren: () => import('./test2dbs/test2dbs.module').then( m => m.Test2dbsPageModule)
   }
 
 ];

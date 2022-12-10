@@ -11,6 +11,9 @@ import { HttpClientJsonpModule, HttpClientModule } from '@angular/common/http';
 import { IonicStorageModule } from '@ionic/storage-angular';
 import { Drivers } from '@ionic/storage';
 import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
+import { SQLiteService } from './services/sqlite.service';
+import { DatabaseService } from './services/database.service';
+import { DetailService } from './services/detail.service';
 
 @NgModule({
   declarations: [
@@ -30,7 +33,10 @@ import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
   ],
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-    NativeStorage
+    NativeStorage,
+    SQLiteService,
+    DetailService,
+    DatabaseService
   ],
   bootstrap: [AppComponent],
 })

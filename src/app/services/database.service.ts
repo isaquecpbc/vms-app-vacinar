@@ -1,122 +1,40 @@
 import { Injectable } from '@angular/core';
-import { Plugins } from '@capacitor/core';
-import '@capacitor-community/sqlite';
-import { AlertController } from '@ionic/angular';
-import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, from, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { SQLiteDBConnection } from '@capacitor-community/sqlite';
+import { environment } from 'src/environments/environment';
+import { SQLiteService } from './sqlite.service';
 
-import { JsonSQLite } from '@capacitor-community/sqlite';
-const { CapacitorSQLite, Device, Storage } = Plugins;
+interface SQLiteDBConnectionCallback<T> { (myArguments: SQLiteDBConnection): T }
 
-const DB_SETUP_KEY = 'first_db_setup';
-const DB_NAME_KEY = 'db_name';
-
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class DatabaseService {
-  dbReady = new BehaviorSubject(false);
-  dbName = '';
 
-  constructor(private http: HttpClient, private alertCtrl: AlertController) { }
+  constructor(private sqlite: SQLiteService) {
+  }
 
-  async init(): Promise<void> {
-    const info = await Device['getInfo']();
+  /**
+   * this function will handle the sqlite isopen and isclosed automatically for you.
+   * @param callback: The callback function that will execute multiple SQLiteDBConnection commands or other stuff.
+   * @param databaseName optional another database name
+   * @returns any type you want to receive from the callback function.
+   */
+  async executeQuery<T>(callback: SQLiteDBConnectionCallback<T>, databaseName: string = environment.databaseName): Promise<T> {
+    try {
+      let isConnection = await this.sqlite.isConnection(databaseName);
 
-    if (info.platform === 'android') {
-      try {
-        const sqlite = CapacitorSQLite as any;
-        await sqlite.requestPermissions();
-        this.setupDatabase();
-      } catch (e) {
-        const alert = await this.alertCtrl.create({
-          header: 'No DB access',
-          message: 'This app can\'t work without Database access.',
-          buttons: ['OK']
-        });
-        await alert.present();
+      if (isConnection.result) {
+        let db = await this.sqlite.retrieveConnection(databaseName);
+        return await callback(db);
       }
-    } else {
-      this.setupDatabase();
+      else {
+        const db = await this.sqlite.createConnection(databaseName, false, "no-encryption", 1);
+        await db.open();
+        let cb = await callback(db);
+        await this.sqlite.closeConnection(databaseName);
+        return cb;
+      }
+    } catch (error) {
+      throw Error(`DatabaseServiceError: ${error}`);
     }
   }
-
-  private async setupDatabase() {
-    const dbSetupDone = await Storage['get']({ key: DB_SETUP_KEY });
-
-    if (!dbSetupDone.value) {
-      this.downloadDatabase();
-    } else {
-      this.dbName = (await Storage['get']({ key: DB_NAME_KEY })).value;
-      await CapacitorSQLite['open']({ database: this.dbName });
-      this.dbReady.next(true);
-    }
-  }
-
-  // Potentially build this out to an update logic:
-  // Sync your data on every app start and update the device DB
-  private downloadDatabase(update = false) {
-      this.http.get('https://devdactic.fra1.digitaloceanspaces.com/tutorial/db.json')
-      .subscribe(async (jsonExport: any) => {
-      const jsonstring = JSON.stringify(jsonExport);
-      const isValid = await CapacitorSQLite['isJsonValid']({ jsonstring });
-
-      if (isValid.result) {
-        this.dbName = jsonExport.database;
-        await Storage['set']({ key: DB_NAME_KEY, value: this.dbName });
-        await CapacitorSQLite['importFromJson']({ jsonstring });
-        await Storage['set']({ key: DB_SETUP_KEY, value: '1' });
-
-        // Your potential logic to detect offline changes later
-        if (!update) {
-          await CapacitorSQLite['createSyncTable']();
-        } else {
-          await CapacitorSQLite['setSyncDate']({ syncdate: '' + new Date().getTime() })
-        }
-        this.dbReady.next(true);
-      }
-    });
-  }
-  ngetProductList() {
-    return this.dbReady.pipe(
-      switchMap(isReady => {
-        if (!isReady) {
-          return of({ values: [] });
-        } else {
-          const statement = 'SELECT * FROM products;';
-          return from(CapacitorSQLite['query']({ statement, values: [] }));
-        }
-      })
-    )
-  }
-
-  async getProductById(id: any) {
-    const statement = `SELECT * FROM products LEFT JOIN vendors ON vendors.id=products.vendorid WHERE products.id=${id} ;`;
-    return (await CapacitorSQLite['query']({ statement, values: [] })).values[0];
-  }
-
-  getDatabaseExport(mode: any) {
-    return CapacitorSQLite['exportToJson']({ jsonexportmode: mode });
-  }
-
-  addDummyProduct(name: any) {
-    const randomValue = Math.floor(Math.random() * 100) + 1;
-    const randomVendor = Math.floor(Math.random() * 3) + 1
-    const statement = `INSERT INTO products (name, currency, value, vendorid) VALUES ('${name}','EUR', ${randomValue}, ${randomVendor});`;
-    return CapacitorSQLite['execute']({ statements: statement });
-  }
-
-  deleteProduct(productId: any) {
-    const statement = `DELETE FROM products WHERE id = ${productId};`;
-    return CapacitorSQLite['execute']({ statements: statement });
-  }
-
-  // For testing only..
-  async deleteDatabase() {
-    const dbName = await Storage['get']({ key: DB_NAME_KEY });
-    await Storage['set']({ key: DB_SETUP_KEY, value: null });
-    return CapacitorSQLite['deleteDatabase']({ database: dbName.value });
-  }
-
 }
+

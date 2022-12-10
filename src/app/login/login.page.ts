@@ -20,7 +20,7 @@ export class LoginPage implements OnInit {
   formPassword: string = '';
   showLoading = false;
   dbStatus: string|null = 'INICIANDO';
-  dbStatusNative: string|null = 'INICIANDO';
+  dbStatusNative: string|null|void = 'INICIANDO';
 
   constructor(
     private authService: AuthService,
@@ -37,7 +37,7 @@ export class LoginPage implements OnInit {
     this.storageService.set('teste', 'funciona porra storage');
     this.localStorageNative.setItem('brasil', 'Meia bomba');
     const token = await this.storageService.get('teste');
-    const brasil = await this.storageService.get('brasil');
+    const brasil = await this.localStorageNative.getItem('brasil');
     this.dbStatus = token;
     this.dbStatusNative = brasil;
 
