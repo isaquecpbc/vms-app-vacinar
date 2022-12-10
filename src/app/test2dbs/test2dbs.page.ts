@@ -18,6 +18,7 @@ export class Test2dbsPage implements AfterViewInit {
   isNative: boolean;
   handlerPermissions: any;
   initPlugin: boolean = false;
+  statusTest = false;
 
   constructor(
     private _sqlite: SQLiteService,
@@ -35,16 +36,10 @@ export class Test2dbsPage implements AfterViewInit {
     };
     try {
       await this.runTest();
-      const sqlAllsuccess = document.querySelector('.sql-allsuccess');
-      if (sqlAllsuccess !== null) {
-        sqlAllsuccess.classList.remove('display');
-      }
+      this.statusTest = true;
       console.log("$$$ runTest was successful");
     } catch (err: any) {
-      const sqlAllsuccess = document.querySelector('.sql-allsuccess');
-      if (sqlAllsuccess !== null) {
-        sqlAllsuccess.classList.remove('display');
-      }
+      this.statusTest = false;
       console.log(`$$$ runTest failed ${err.message}`);
       await showAlert(err.message);
     }

@@ -21,10 +21,10 @@
       <ion-card-title>
         Results of refactor sqlite test
       </ion-card-title>
-      <p class="sql-allsuccess display">
+      <p class="sql-allsuccess display" *ngIf="statusTest">
         The set of tests was successful
       </p>
-      <p class="sql-allfailure display">
+      <p class="sql-allfailure display" *ngIf="!statusTest">
         The set of tests failed
       </p>
     </ion-card>
