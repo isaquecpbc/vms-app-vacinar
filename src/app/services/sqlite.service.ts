@@ -45,7 +45,7 @@ export class SQLiteService {
                 return Promise.reject(err);
             }
         } else {
-            return Promise.reject(new Error("no connection open"));
+            return Promise.reject(new Error("no connection open 1"));
         }
     }
     async isSecretStored(): Promise<capSQLiteResult> {
@@ -59,7 +59,7 @@ export class SQLiteService {
                 return Promise.reject(err);
             }
         } else {
-            return Promise.reject(new Error(`no connection open`));
+            return Promise.reject(new Error(`no connection open 2`));
         }
     }
     async setEncryptionSecret(passphrase: string): Promise<void> {
@@ -73,7 +73,7 @@ export class SQLiteService {
                 return Promise.reject(err);
             }
         } else {
-            return Promise.reject(new Error(`no connection open`));
+            return Promise.reject(new Error(`no connection open 3`));
         }
 
     }
@@ -89,7 +89,7 @@ export class SQLiteService {
                 return Promise.reject(err);
             }
         } else {
-            return Promise.reject(new Error(`no connection open`));
+            return Promise.reject(new Error(`no connection open 4`));
         }
 
     }
@@ -193,7 +193,7 @@ export class SQLiteService {
                 return Promise.reject(err);
             }
         } else {
-            return Promise.reject(new Error(`no connection open`));
+            return Promise.reject(new Error(`no connection open 5`));
         }
 
     }
@@ -228,7 +228,7 @@ export class SQLiteService {
                 return Promise.reject(err);
             }
         } else {
-            return Promise.reject(new Error(`no connection open`));
+            return Promise.reject(new Error(`no connection open 6`));
         }
     }
     /**
@@ -310,7 +310,7 @@ export class SQLiteService {
                 return Promise.reject(err);
             }
         } else {
-            return Promise.reject(new Error(`no connection open`));
+            return Promise.reject(new Error(`no connection open 7`));
         }
     }
     /**
@@ -324,7 +324,7 @@ export class SQLiteService {
                 return Promise.reject(err);
             }
         } else {
-            return Promise.reject(new Error(`no connection open`));
+            return Promise.reject(new Error(`no connection open 8`));
         }
     }
     /**
@@ -340,7 +340,7 @@ export class SQLiteService {
                 return Promise.reject(err);
             }
         } else {
-            return Promise.reject(new Error(`no connection open`));
+            return Promise.reject(new Error(`no connection open 9`));
         }
     }
     /**
@@ -356,7 +356,7 @@ export class SQLiteService {
                 return Promise.reject(err);
             }
         } else {
-            return Promise.reject(new Error(`no connection open`));
+            return Promise.reject(new Error(`no connection open 10`));
         }
     }
     /**
@@ -371,7 +371,7 @@ export class SQLiteService {
                 return Promise.reject(err);
             }
         } else {
-            return Promise.reject(new Error(`no connection open`));
+            return Promise.reject(new Error(`no connection open 11`));
         }
     }
     /**
@@ -385,7 +385,7 @@ export class SQLiteService {
                 return Promise.reject(err);
             }
         } else {
-            return Promise.reject(new Error(`no connection open`));
+            return Promise.reject(new Error(`no connection open 12`));
         }
     }
     /**
@@ -405,7 +405,7 @@ export class SQLiteService {
                 return Promise.reject(err);
             }
         } else {
-            return Promise.reject(new Error(`no connection open`));
+            return Promise.reject(new Error(`no connection open 13`));
         }
     }
 
@@ -425,7 +425,7 @@ export class SQLiteService {
                 return Promise.reject(err);
             }
         } else {
-            return Promise.reject(new Error(`no connection open`));
+            return Promise.reject(new Error(`no connection open 14`));
         }
     }
     /**
@@ -444,7 +444,7 @@ export class SQLiteService {
                 return Promise.reject(err);
             }
         } else {
-            return Promise.reject(new Error(`no connection open`));
+            return Promise.reject(new Error(`no connection open 15`));
         }
     }
 
@@ -480,7 +480,7 @@ export class SQLiteService {
                 return Promise.reject(err);
             }
         } else {
-            return Promise.reject(new Error(`no connection open`));
+            return Promise.reject(new Error(`no connection open 16`));
         }
 
     }
@@ -498,7 +498,7 @@ export class SQLiteService {
                 return Promise.reject(err);
             }
         } else {
-            return Promise.reject(new Error(`no connection open`));
+            return Promise.reject(new Error(`no connection open 17`));
         }
 
     }
@@ -516,7 +516,7 @@ export class SQLiteService {
                 return Promise.reject(err);
             }
         } else {
-            return Promise.reject(new Error(`no connection open`));
+            return Promise.reject(new Error(`no connection open 18`));
         }
     }
 
@@ -535,7 +535,7 @@ export class SQLiteService {
                 return Promise.reject(err);
             }
         } else {
-            return Promise.reject(new Error(`no connection open`));
+            return Promise.reject(new Error(`no connection open 19`));
         }
     }
     /**
