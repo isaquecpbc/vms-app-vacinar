@@ -22,7 +22,7 @@ export class AuthIntegrationService {
   private authenticationIsValid$ = new Subject<boolean>();
 
   logout() {
-    this.localStorage.clear();
+    // this.localStorage.clear();
   }
 
   setToken(token: string) {

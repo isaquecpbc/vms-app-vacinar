@@ -6,6 +6,7 @@ import { Preferences, SetOptions } from '@capacitor/preferences';
 })
 export class LocalStoragePreferencesService {
     async setItem(key:string, value: string) {
+        await Preferences.remove({key});
         await Preferences.set({
             key,
             value,

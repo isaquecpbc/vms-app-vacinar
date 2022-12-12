@@ -20,30 +20,14 @@ export class AppComponent implements OnInit {
   public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
   public isLogged = false;
   public initPlugin = false;
-  status = 'INICIADO';
 
   constructor(
     private authService: AuthIntegrationService,
-    // private databaseService: DatabaseService,
-    // private _sqlite: SQLiteService,
-  // private nativeStorage: NativeStorage
-
   ) {
-    // this.ouvirStatusLogin();
+    this.ouvirStatusLogin();
   }
 
   async ngOnInit() {
-    // this.initializeApp();
-
-//     await this.nativeStorage.setItem('myitem', {property: 'value', anotherProperty: 'anotherValue'});
-//     const valor = await this.nativeStorage.getItem('myitem');
-//     console.log(valor);
-//     this.status=valor;
-//
-    // this._sqlite.initializePlugin().then(ret => {
-    //   this.initPlugin = ret;
-    //   console.log('>>>> in App  this.initPlugin ' + this.initPlugin);
-    // });
   }
 
   private ouvirStatusLogin() {
