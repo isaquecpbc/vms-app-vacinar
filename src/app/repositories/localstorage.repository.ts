@@ -1,11 +1,10 @@
 
 import { DBSQLiteValues, SQLiteDBConnection } from '@capacitor-community/sqlite';
 import { Injectable } from '@angular/core';
-// import productsData from './products-data-example';
 import { DatabaseService } from 'src/app/services/database.service';
 import { Product } from 'src/app/models/Product';
-import { Auth } from '../models/auth.model';
-import { LocalStorageValues } from '../services/locastorage-native.service';
+import { LocalStorageValues } from '../models/local-storage.model';
+
 @Injectable()
 export class LocalStorageRepository {
   constructor(private _databaseService: DatabaseService) {
@@ -19,7 +18,7 @@ export class LocalStorageRepository {
   }
 
   getTimestampInSeconds () {
-    return Math.floor(Date.now() / 1000)
+    return Math.floor(Date.now() / 1000);
   }
 
   async create(table: LocalStorageValues): Promise<LocalStorageValues> {
