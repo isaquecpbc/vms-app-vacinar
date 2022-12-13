@@ -2,6 +2,8 @@ import { Injectable, Injector } from '@angular/core';
 import { BaseService } from './base.service';
 import { HttpResponse } from '@capacitor/core';
 import { Auth } from '../models/auth.model';
+import { Observable, tap, from, of, catchError, map, firstValueFrom, take, delayWhen, concatMap, merge, mergeMap } from 'rxjs';
+import { AuthRepository } from '../repositories/auth.repository';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +11,8 @@ import { Auth } from '../models/auth.model';
 export class AuthService extends BaseService<Auth> {
 
   constructor(
-    protected override injector: Injector
+    protected override injector: Injector,
+    private authRepository: AuthRepository
   ) {
     super(injector, 'auth', '/auth');
   }
@@ -21,5 +24,39 @@ export class AuthService extends BaseService<Auth> {
     } as Auth));
 
     return result;
+  }
+
+  createWorkaround2(body: Auth): Observable<Auth> {
+    return from(this.authRepository.getById(body.login as string))
+      .pipe(
+        catchError(_ =>
+          super.createWorkaround(body)
+          // .pipe(
+          //   tap(async res => await this.authRepository.create(res).then(() => console.log('Criou!'))),
+          // )
+        )
+      )
+    //   (reason) => {
+        // return super.createWorkaround(body)
+        //   .pipe(
+        //     tap( res => this.authRepository.create(res))
+        //   )
+    //   }
+    // ));
+      // .pipe (
+      //   tap( res => Observable.create(res))
+      // )
+    // .then((res) => {
+    //     return ;
+    //   },
+    //   (reason) => {
+    //     return super.createWorkaround(body)
+    //       .pipe(
+    //         tap( res => this.authRepository.create(res))
+    //       )
+    //   },
+    // ));
+    //   // @ts-ignore
+    // return response;
   }
 }

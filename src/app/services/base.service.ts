@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Inject, Injectable, Injector } from "@angular/core";
-import { forkJoin, map, Observable, Subject } from "rxjs";
+import { forkJoin, map, Observable, Subject, tap } from "rxjs";
 import { ConnectionStatusService } from "./connection-status.service";
 import { environment } from "../../environments/environment";
 import Dexie, { Table } from 'dexie';

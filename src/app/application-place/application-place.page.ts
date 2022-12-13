@@ -4,6 +4,7 @@ import { ToastController } from '@ionic/angular';
 import { Clinica } from '../models/clinica.model';
 import { AuthIntegrationService } from '../services/auth-integration.service';
 import { ClinicasService } from '../services/clinicas.service';
+import { AuthRepository } from '../repositories/auth.repository';
 
 @Component({
   selector: 'app-application-place',
@@ -14,16 +15,22 @@ export class ApplicationPlacePage implements OnInit {
   showLoading = false;
   clinicas: Array<Clinica> = [];
   formCep = '';
+  totalBco = 0;
 
   constructor(
     private clinicasService: ClinicasService,
     private router: Router,
     private toastController: ToastController,
+    private authRepository: AuthRepository,
     private authIntegrationService: AuthIntegrationService
   ) { }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.authIntegrationService.isAuthenticated();
+    // await this.authRepository.createTestData();
+    this.authRepository.getAll().then(
+      (res) => { this.totalBco = res.length; console.log('TUDO', res)}
+    )
   }
 
   filterApply(cep: string) {
@@ -44,6 +51,10 @@ export class ApplicationPlacePage implements OnInit {
         error => console.log('ERROR:',error),
         () => this.showLoading = false
       );
+  }
+
+  voltar() {
+    this.router.navigate(['/login']);
   }
 
   next(cep: string) {

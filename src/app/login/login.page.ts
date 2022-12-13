@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
+import { from } from 'rxjs';
 import { Auth } from '../models/auth.model';
+import { AuthRepository } from '../repositories/auth.repository';
 import { AuthIntegrationService } from '../services/auth-integration.service';
 import { AuthService } from '../services/auth.service';
 
@@ -14,17 +16,23 @@ export class LoginPage implements OnInit {
   formUser: string = '';
   formPassword: string = '';
   showLoading = false;
+  totalBco = 0;
 
   constructor(
     private authService: AuthService,
     private router: Router,
     private toastController: ToastController,
+    private authRepository: AuthRepository,
     private authIntegrationService: AuthIntegrationService
   ) { }
 
-  async ngOnInit() { }
+  async ngOnInit() {
+    await this.authRepository.getAll().then(
+      (res) => { this.totalBco = res.length; console.log('TUDO', res)}
+    )
+  }
 
-  login(user: string, pass: string) {
+  async login(user: string, pass: string) {
     this.showLoading = true;
     const userObj = {
       id: user,
@@ -33,13 +41,19 @@ export class LoginPage implements OnInit {
       campanhaId: '165',
       system: 'auth-vms'
     } as Auth;
-    this.authService
-      .createWorkaround(userObj).subscribe(
-        item => {
-          this.authIntegrationService.setToken(item.token || '');
-          // TODO: Alterar para interceptor HTTP Request
-          this.authIntegrationService.isAuthenticated();
-          this.router.navigate(['/application-place']);
+    this.authService.createWorkaround2(userObj)
+      .subscribe(
+        async item => {
+          console.log('item', item);
+          this.authRepository.create(item)
+          .then((result) => {
+              console.log('passou aqui', result);
+              this.authIntegrationService.setToken(item.token || '');
+              // TODO: Alterar para interceptor HTTP Request
+              this.authIntegrationService.isAuthenticated();
+              this.router.navigate(['/application-place']);
+            }
+          );
         },
         error => {
           this.presentToast('top', 'Ocorreu um erro ao realizar o login!');

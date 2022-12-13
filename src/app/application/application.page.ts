@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { AlertController, ToastController } from '@ionic/angular';
 import { AplicacoesService } from '../services/aplicacoes.service';
-import { Http, HttpOptions } from '@capacitor-community/http';
-import { from } from 'rxjs';
 import { Aplicacao } from '../models/aplicacao.model';
 import { CripytexService } from '../services/cripytex.service';
 import { AuthIntegrationService } from '../services/auth-integration.service';
+import { ProductRepository } from './repositories/product.repository';
+import { Product } from '../models/Product';
 
 @Component({
   selector: 'app-application',
@@ -18,17 +18,20 @@ export class ApplicationPage implements OnInit {
   handlerMessage = '';
   roleMessage = '';
   showLoading = false;
+  public products: Product[] = [];
 
   constructor(
     private alertController: AlertController,
     private aplicacaoService: AplicacoesService,
     private cripytex: CripytexService,
     private toastController: ToastController,
-    private authIntegrationService: AuthIntegrationService
+    private authIntegrationService: AuthIntegrationService,
+    private productRepository: ProductRepository,
   ) {}
 
   ngOnInit() {
     this.authIntegrationService.isAuthenticated();
+    this.getProducts();
   }
 
   async apply(id: number, participanteNome: string) {
@@ -115,4 +118,17 @@ export class ApplicationPage implements OnInit {
       this.results = [];
     }
   }
+
+  async getProducts() {
+    // await this.productRepository.createTestData();
+    this.products = await this.productRepository.getProducts();
+    console.log(`databaseService used: products:`);
+    console.log(this.products);
+
+    //normal db open db close version
+    // await this.productDefaultQueryRepository.getProducts();
+    // console.log(`default dbopen dbclose used:`);
+    // console.log(this.products);
+  }
+
 }

@@ -16,6 +16,8 @@ import { DatabaseService } from './services/database.service';
 import { DetailService } from './services/detail.service';
 import { MigrationService } from './services/migrations.service';
 import { InitializeAppService } from './services/initialize.app.service';
+import { ProductRepository } from './application/repositories/product.repository';
+import { AuthRepository } from './repositories/auth.repository';
 
 export function initializeFactory(init: InitializeAppService) {
   return () => init.initializeApp();
@@ -44,6 +46,8 @@ export function initializeFactory(init: InitializeAppService) {
     DetailService,
     MigrationService,
     DatabaseService,
+    ProductRepository,
+    AuthRepository,
 
     InitializeAppService,
     {

@@ -3,6 +3,24 @@ import { environment } from 'src/environments/environment';
 import { DatabaseService } from './database.service';
 import { SQLiteService } from './sqlite.service';
 
+export const createSchemaAuth: string = `
+CREATE TABLE IF NOT EXISTS auth (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  login TEXT NOT NULL,
+  nome TEXT NOT NULL,
+  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+`;
+
+export const createSchemaAplicacao: string = `
+CREATE TABLE IF NOT EXISTS aplicacao (
+  id INTEGER PRIMARY KEY NOT NULL,
+  participanteNome TEXT NOT NULL,
+  dtAplicacao TIMESTAMP DEFAULT NULL,
+  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+`;
+
 export const createSchemaProducts: string = `
 CREATE TABLE IF NOT EXISTS products (
   id INTEGER PRIMARY KEY NOT NULL,
@@ -33,11 +51,25 @@ export class MigrationService {
   async migrate(): Promise<any> {
     await this.createTestTable();
     await this.createProductsTable();
+    await this.createAplicacaoTable();
+    await this.createAuthTable();
   }
 
   async createProductsTable(): Promise<any> {
     await this.databaseService.executeQuery(async (db) => {
       await db.execute(createSchemaProducts);
+    });
+  }
+
+  async createAplicacaoTable(): Promise<any> {
+    await this.databaseService.executeQuery(async (db) => {
+      await db.execute(createSchemaAplicacao);
+    });
+  }
+
+  async createAuthTable(): Promise<any> {
+    await this.databaseService.executeQuery(async (db) => {
+      await db.execute(createSchemaAuth);
     });
   }
 
@@ -47,12 +79,7 @@ export class MigrationService {
     console.log(`db ${JSON.stringify(db)}`)
     await db.open();
     console.log(`after db.open`)
-    let query = `
-            CREATE TABLE IF NOT EXISTS test (
-              id INTEGER PRIMARY KEY NOT NULL,
-              name TEXT NOT NULL
-            );
-            `
+    let query = createSchemaTest;
     console.log(`query ${query}`)
 
     const res: any = await db.execute(query);
