@@ -27,12 +27,15 @@ export class LoginPage implements OnInit {
   ) { }
 
   async ngOnInit() {
+    //await this.authRepository.clear().then(
+      //() => console.log('LIMPO')
+    //);
     await this.authRepository.getAll().then(
       (res) => { this.totalBco = res.length; console.log('TUDO', res)}
     )
   }
 
-  async login(user: string, pass: string) {
+  login(user: string, pass: string) {
     this.showLoading = true;
     const userObj = {
       id: user,
@@ -43,17 +46,17 @@ export class LoginPage implements OnInit {
     } as Auth;
     this.authService.createWorkaround2(userObj)
       .subscribe(
-        async item => {
+        item => {
           console.log('item', item);
-          this.authRepository.create(item)
-          .then((result) => {
-              console.log('passou aqui', result);
+          //this.authRepository.create(item)
+          //.then((result) => {
+            //  console.log('passou aqui', result);
               this.authIntegrationService.setToken(item.token || '');
               // TODO: Alterar para interceptor HTTP Request
               this.authIntegrationService.isAuthenticated();
               this.router.navigate(['/application-place']);
-            }
-          );
+            //}
+          //);
         },
         error => {
           this.presentToast('top', 'Ocorreu um erro ao realizar o login!');

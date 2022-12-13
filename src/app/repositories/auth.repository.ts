@@ -62,7 +62,15 @@ export class AuthRepository {
 
   async deleteById(id: number): Promise<void> {
     return this._databaseService.executeQuery<any>(async (db: SQLiteDBConnection) => {
-      await db.query(`delete from products where id = ${id};`);
+      await db.query(`delete from auth where id = ${id};`);
+    });
+  }
+
+  async clear(): Promise<void> {
+    await this._databaseService.executeQuery<any>(async (db: SQLiteDBConnection) => {
+      //delete all products
+      let sqlcmd: string = "DELETE FROM auth;";
+      await db.execute(sqlcmd, false);
     });
   }
 

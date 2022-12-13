@@ -31,11 +31,13 @@ export class AuthService extends BaseService<Auth> {
       .pipe(
         catchError(_ =>
           super.createWorkaround(body)
-          // .pipe(
-          //   tap(async res => await this.authRepository.create(res).then(() => console.log('Criou!'))),
-          // )
+            .pipe(
+              delayWhen(res => from(this.authRepository.create(res))),
+            )
         )
       )
+      // tap(async res => await this.authRepository.create(res)),
+
     //   (reason) => {
         // return super.createWorkaround(body)
         //   .pipe(
