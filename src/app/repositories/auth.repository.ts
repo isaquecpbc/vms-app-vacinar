@@ -17,14 +17,10 @@ export class AuthRepository {
     });
   }
 
-  getTimestampInSeconds () {
-    return Math.floor(Date.now() / 1000)
-  }
-
   async create(table: Auth): Promise<Auth> {
     return this._databaseService.executeQuery<any>(async (db: SQLiteDBConnection) => {
-      let sqlcmd: string = "insert into auth (id, login, nome) values (?, ?, ?)";
-      let values: Array<any> = [this.getTimestampInSeconds(), table.login, table.nome];
+      let sqlcmd: string = "insert into auth (login, nome) values (?, ?)";
+      let values: Array<any> = [table.login, table.nome];
       console.log('(sqlcmd, values)', sqlcmd, values);
       let ret: any = await db.run(sqlcmd, values);
       if (ret.changes.lastId > 0) {
@@ -62,7 +58,7 @@ export class AuthRepository {
 
   async deleteById(id: number): Promise<void> {
     return this._databaseService.executeQuery<any>(async (db: SQLiteDBConnection) => {
-      await db.query(`delete from auth where id = ${id};`);
+      await db.query(`delete from auth where login = ${id};`);
     });
   }
 

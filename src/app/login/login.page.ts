@@ -6,6 +6,7 @@ import { Auth } from '../models/auth.model';
 import { AuthRepository } from '../repositories/auth.repository';
 import { AuthIntegrationService } from '../services/auth-integration.service';
 import { AuthService } from '../services/auth.service';
+import { LocalStorageJessieService } from '../services/locastorage-jessie.service';
 
 @Component({
   selector: 'app-login',
@@ -23,13 +24,17 @@ export class LoginPage implements OnInit {
     private router: Router,
     private toastController: ToastController,
     private authRepository: AuthRepository,
+    private jessieService: LocalStorageJessieService,
     private authIntegrationService: AuthIntegrationService
   ) { }
 
   async ngOnInit() {
-    //await this.authRepository.clear().then(
-      //() => console.log('LIMPO')
-    //);
+    await this.jessieService.setItem('token', '123 bolinha');
+
+    const token = await this.jessieService.getItem('token');
+
+    console.log ('token jessie', token);
+
     await this.authRepository.getAll().then(
       (res) => { this.totalBco = res.length; console.log('TUDO', res)}
     )

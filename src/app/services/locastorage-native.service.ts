@@ -1,12 +1,6 @@
 import { Injectable } from "@angular/core";
 import { NativeStorage } from "@awesome-cordova-plugins/native-storage/ngx";
 
-export class Valores {
-    // id!: string;
-    key: string = '';
-    value: string = '';
-}
-
 @Injectable({
     providedIn: 'root'
 })

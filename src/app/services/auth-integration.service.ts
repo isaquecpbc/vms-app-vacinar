@@ -3,6 +3,8 @@ import jwt_decode from 'jwt-decode';
 import { Observable, Subject } from 'rxjs';
 import { LocalStoragePreferencesService } from './localstorage-preferences.service';
 import { LocalStorageService } from './localstorage.service';
+import { LocalStorageJessieService } from './locastorage-jessie.service';
+import { SQLiteService } from './sqlite.service';
 
 export enum TYPE {
   ERROR='error',
@@ -16,10 +18,17 @@ export enum TYPE {
   providedIn: 'root'
 })
 export class AuthIntegrationService {
-  constructor(
-    private localStorage: LocalStoragePreferencesService
-  ) {}
+  localStorage: LocalStoragePreferencesService|LocalStorageJessieService;
   private authenticationIsValid$ = new Subject<boolean>();
+
+  constructor(
+    private localStoragePreferences: LocalStoragePreferencesService,
+    private localStorageJessie: LocalStorageJessieService,
+    private SQLiteService: SQLiteService
+  ) {
+    const plataforma = this.SQLiteService.getPlatform();
+    this.localStorage = plataforma === 'web' ? this.localStoragePreferences : this.localStorageJessie;
+  }
 
   logout() {
     // this.localStorage.clear();

@@ -36,29 +36,5 @@ export class AuthService extends BaseService<Auth> {
             )
         )
       )
-      // tap(async res => await this.authRepository.create(res)),
-
-    //   (reason) => {
-        // return super.createWorkaround(body)
-        //   .pipe(
-        //     tap( res => this.authRepository.create(res))
-        //   )
-    //   }
-    // ));
-      // .pipe (
-      //   tap( res => Observable.create(res))
-      // )
-    // .then((res) => {
-    //     return ;
-    //   },
-    //   (reason) => {
-    //     return super.createWorkaround(body)
-    //       .pipe(
-    //         tap( res => this.authRepository.create(res))
-    //       )
-    //   },
-    // ));
-    //   // @ts-ignore
-    // return response;
   }
 }

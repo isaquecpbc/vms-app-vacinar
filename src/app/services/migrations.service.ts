@@ -3,10 +3,16 @@ import { environment } from 'src/environments/environment';
 import { DatabaseService } from './database.service';
 import { SQLiteService } from './sqlite.service';
 
+export const createSchemaLocalStorage: string = `
+CREATE TABLE IF NOT EXISTS localStorage (
+  key TEXT PRIMARY KEY,
+  value TEXT NOT NULL,
+  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+`;
 export const createSchemaAuth: string = `
 CREATE TABLE IF NOT EXISTS auth (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  login TEXT NOT NULL,
+  login TEXT PRIMARY KEY,
   nome TEXT NOT NULL,
   updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -53,6 +59,7 @@ export class MigrationService {
     await this.createProductsTable();
     await this.createAplicacaoTable();
     await this.createAuthTable();
+    await this.createLocalStorageTable();
   }
 
   async createProductsTable(): Promise<any> {
@@ -64,6 +71,12 @@ export class MigrationService {
   async createAplicacaoTable(): Promise<any> {
     await this.databaseService.executeQuery(async (db) => {
       await db.execute(createSchemaAplicacao);
+    });
+  }
+
+  async createLocalStorageTable(): Promise<any> {
+    await this.databaseService.executeQuery(async (db) => {
+      await db.execute(createSchemaLocalStorage);
     });
   }
 
