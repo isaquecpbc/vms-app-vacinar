@@ -47,6 +47,7 @@ export class AuthIntegrationService {
 
   async getToken() {
     const token = await this.localStorage.getItem('token');
+    console.log('token', token);
     return token !== null ? `${token}` : '';
   }
 

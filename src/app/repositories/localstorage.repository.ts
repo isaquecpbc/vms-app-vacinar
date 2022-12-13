@@ -33,16 +33,16 @@ export class LocalStorageRepository {
     });
   }
 
-  async update(product: Product) {
-    // return this._databaseService.executeQuery<any>(async (db: SQLiteDBConnection) => {
-    //   let sqlcmd: string = "update products set name = ?, description = ?, price = ?, imageUrl = ?, isAvailable = ?, isPopular = ?, category = ? where id = ?";
-    //   let values: Array<any> = [product.name, product.description, product.price, product.imageUrl, product.isAvailable, product.isPopular, product.category, product.id];
-    //   let ret: any = await db.run(sqlcmd, values);
-    //   if (ret.changes.changes > 0) {
-    //     return await this.getById(product.id);
-    //   }
-    //   throw Error('update product failed');
-    // });
+  async update(item: LocalStorageValues) {
+    return this._databaseService.executeQuery<any>(async (db: SQLiteDBConnection) => {
+      let sqlcmd: string = "update localStorage set value = ? where key = ?";
+      let values: Array<any> = [item.value, item.key];
+      let ret: any = await db.run(sqlcmd, values);
+      if (ret.changes.changes > 0) {
+        return await this.getById(item.key);
+      }
+      throw Error('update LocalStorageValues failed');
+    });
   }
 
   async getById(key: string): Promise<LocalStorageValues> {
