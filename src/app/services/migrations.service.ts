@@ -14,6 +14,7 @@ export const createSchemaAuth: string = `
 CREATE TABLE IF NOT EXISTS auth (
   login TEXT PRIMARY KEY,
   nome TEXT NOT NULL,
+  token TEXT NOT NULL,
   updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 `;

@@ -13,7 +13,7 @@ export class LocalStorageJessieService {
     }
 
     async setItem(key: string, value: string) {
-        return this.jessieStorage.getById(key)
+        await this.jessieStorage.getById(key)
             .then(() => this.jessieStorage.update({key, value}))
             .catch(() => this.jessieStorage.create({key, value}));
     }

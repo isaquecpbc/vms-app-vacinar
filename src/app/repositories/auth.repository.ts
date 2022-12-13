@@ -19,8 +19,8 @@ export class AuthRepository {
 
   async create(table: Auth): Promise<Auth> {
     return this._databaseService.executeQuery<any>(async (db: SQLiteDBConnection) => {
-      let sqlcmd: string = "insert into auth (login, nome) values (?, ?)";
-      let values: Array<any> = [table.login, table.nome];
+      let sqlcmd: string = "insert into auth (login, nome, token) values (?, ?, ?)";
+      let values: Array<any> = [table.login, table.nome, table.token];
       console.log('(sqlcmd, values)', sqlcmd, values);
       let ret: any = await db.run(sqlcmd, values);
       if (ret.changes.lastId > 0) {
