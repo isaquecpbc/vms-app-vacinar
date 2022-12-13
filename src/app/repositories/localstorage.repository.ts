@@ -38,6 +38,7 @@ export class LocalStorageRepository {
       let sqlcmd: string = "update localStorage set value = ? where key = ?";
       let values: Array<any> = [item.value, item.key];
       let ret: any = await db.run(sqlcmd, values);
+      console.log('update', ret);
       if (ret.changes.changes > 0) {
         return await this.getById(item.key);
       }
@@ -50,6 +51,7 @@ export class LocalStorageRepository {
       let sqlcmd: string = "select * from localStorage where key = ? limit 1";
       let values: Array<any> = [key];
       let ret: any = await db.query(sqlcmd, values);
+      console.log('getById', ret);
       if (ret.values.length > 0) {
         return ret.values[0] as LocalStorageValues;
       }

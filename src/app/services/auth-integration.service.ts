@@ -31,7 +31,7 @@ export class AuthIntegrationService {
   }
 
   logout() {
-    // this.localStorage.clear();
+    this.localStorage.clear();
   }
 
   setToken(token: string) {

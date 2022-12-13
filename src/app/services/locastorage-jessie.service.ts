@@ -16,24 +16,11 @@ export class LocalStorageJessieService {
         return this.jessieStorage.getById(key)
             .then(() => this.jessieStorage.update({key, value}))
             .catch(() => this.jessieStorage.create({key, value}));
-
-        // .pipe(
-        //   catchError(_ =>
-        //     super.createWorkaround(body)
-        //       .pipe(
-        //         delayWhen(res => from(this.authRepository.create(res))),
-        //       )
-        //   )
-        // )
-
-        // return this.jessieStorage.update(key)
-        //     .then()
-        //     .catch()
-        //     .finally(() => this.jessieStorage.create({key, value}))
     }
 
     async getItem(keyItem: string) {
-        await this.jessieStorage.getById(keyItem);
+        const value = await this.jessieStorage.getById(keyItem);
+        return value ? value.value : null;
     }
 
     clear() {

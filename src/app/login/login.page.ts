@@ -29,15 +29,15 @@ export class LoginPage implements OnInit {
   ) { }
 
   async ngOnInit() {
-    await this.jessieService.setItem('token', '123 bolinha');
+    // await this.jessieService.setItem('token', '123 bolinha');
 
-    const token = await this.jessieService.getItem('token');
+    // const token = await this.jessieService.getItem('token');
 
-    console.log ('token jessie', token);
+    // console.log ('token jessie', token);
 
-    await this.authRepository.getAll().then(
-      (res) => { this.totalBco = res.length; console.log('TUDO', res)}
-    )
+    // await this.authRepository.getAll().then(
+    //   (res) => { this.totalBco = res.length; console.log('TUDO', res)}
+    // )
   }
 
   login(user: string, pass: string) {
@@ -53,15 +53,10 @@ export class LoginPage implements OnInit {
       .subscribe(
         item => {
           console.log('item', item);
-          //this.authRepository.create(item)
-          //.then((result) => {
-            //  console.log('passou aqui', result);
-              this.authIntegrationService.setToken(item.token || '');
-              // TODO: Alterar para interceptor HTTP Request
-              this.authIntegrationService.isAuthenticated();
-              this.router.navigate(['/application-place']);
-            //}
-          //);
+          this.authIntegrationService.setToken(item.token || '');
+          // TODO: Alterar para interceptor HTTP Request
+          this.authIntegrationService.isAuthenticated();
+          this.router.navigate(['/application-place']);
         },
         error => {
           this.presentToast('top', 'Ocorreu um erro ao realizar o login!');
