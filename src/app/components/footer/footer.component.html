@@ -12,7 +12,8 @@
           </ng-template>
         </ion-col>
         <ion-col>
-          <ion-title>{{isLogged ? 'AUTH' : 'NOK'}}</ion-title>
+          <!-- <ion-title>{{isLogged ? 'AUTH' : 'NOK'}}</ion-title> -->
+          <ion-title>{{networkStatus | json}}</ion-title>
         </ion-col>
       </ion-row>
     </ion-grid>

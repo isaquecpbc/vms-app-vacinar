@@ -20,10 +20,13 @@ export class AppComponent implements OnInit {
   public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
   public isLogged = false;
   public initPlugin = false;
+  private plataforma: string|undefined = 'web';
 
   constructor(
     private authService: AuthIntegrationService,
+    private SQLiteService: SQLiteService
   ) {
+    this.plataforma = this.SQLiteService.getPlatform();
     this.ouvirStatusLogin();
   }
 
@@ -33,7 +36,7 @@ export class AppComponent implements OnInit {
   private ouvirStatusLogin() {
     this.authService.statusAuthentication
       .subscribe(
-        online => this.isLogged = online
+        online => this.isLogged = (online || this.plataforma !== 'web')
       )
   }
 }
