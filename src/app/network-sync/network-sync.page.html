@@ -1,0 +1,30 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Sincronização de dados</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-item>
+    <ion-label>
+      <h1>Locais de Aplicação</h1>
+      <p><b>Progresso:</b> {{totalImportadoAplicacao}} / {{totalRowsTableAplicacao}}</p>
+    </ion-label>
+    <ion-spinner name="bubbles" *ngIf="totalImportadoAplicacao !== totalRowsTableAplicacao"></ion-spinner>
+  </ion-item>
+  <ion-item>
+    <ion-label>
+      <h1>Participantes</h1>
+      <p><b>Progresso:</b> {{totalImportadoClinica}} / {{totalRowsTableClinica}}</p>
+    </ion-label>
+    <ion-spinner name="bubbles" *ngIf="totalImportadoClinica !== totalRowsTableClinica"></ion-spinner>
+  </ion-item>
+  <ion-button class="ion-padding" expand="block"
+    (click)="next()"
+    [disabled]="!((totalImportadoClinica === totalRowsTableClinica) && (totalImportadoAplicacao === totalRowsTableAplicacao))">
+    Seguir
+  </ion-button>
+</ion-content>

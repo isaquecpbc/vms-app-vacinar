@@ -30,7 +30,11 @@ const routes: Routes = [
   {
     path: 'test2dbs',
     loadChildren: () => import('./test2dbs/test2dbs.module').then( m => m.Test2dbsPageModule)
+  },  {
+    path: 'network-sync',
+    loadChildren: () => import('./network-sync/network-sync.module').then( m => m.NetworkSyncPageModule)
   }
+
 
 ];
 

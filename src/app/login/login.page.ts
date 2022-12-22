@@ -52,11 +52,11 @@ export class LoginPage implements OnInit {
     this.authService.createWorkaround2(userObj)
       .subscribe(
         item => {
-          console.log('item', item);
-          this.authIntegrationService.setToken(item.token || '');
+          const token = `${item.token}`;
+          this.authIntegrationService.setToken(token);
           // TODO: Alterar para interceptor HTTP Request
           this.authIntegrationService.isAuthenticated();
-          this.router.navigate(['/application-place']);
+          this.router.navigate(['/network-sync']);
         },
         error => {
           this.presentToast('top', 'Ocorreu um erro ao realizar o login!');

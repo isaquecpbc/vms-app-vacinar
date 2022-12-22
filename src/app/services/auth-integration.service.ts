@@ -35,6 +35,9 @@ export class AuthIntegrationService {
   }
 
   setToken(token: string) {
+    if (!token.length) {
+      throw Error('Sem conteúdo para setar o token');
+    }
     this.localStorage.setItem('token', token);
   }
 

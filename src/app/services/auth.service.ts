@@ -32,7 +32,10 @@ export class AuthService extends BaseService<Auth> {
         catchError(_ =>
           super.createWorkaround(body)
             .pipe(
-              delayWhen(res => from(this.authRepository.create(res))),
+              map(res => {
+                this.authRepository.create(res).then(() => console.log('CREATED NEW AUTH'));
+                return res;
+              }),
             )
         )
       )

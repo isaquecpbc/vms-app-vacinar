@@ -96,33 +96,48 @@ export abstract class BaseService<T extends {id: number|string}> {
         return this.totalImportaded$.asObservable();
     }
 
-    async salvarOffline() {
+    async salvarOffline(...args: paramsRequest[]) {
+        const endpoint = this.getEndpoint(...args);
         const options: HttpOptions = {
             method: 'GET',
-            url: `${this.apiUrl}${this.endpoint}`,
+            url: `${this.apiUrl}${endpoint}`,
             params: { returnType: 'includePagination', per_page: '1000' },
-          };
-          const _self = this;
-          from(Http.request(options)).subscribe(res => {
-            this.totalRowsTable$.next(res.data.pagination.totalRowCount);
+        };
 
+        options.params = Object.assign({}, options.params, this.getFilters(...args));
+
+        const _self = this;
+        from(Http.request(options)).subscribe(async res => {
             const mapObjectExternal = this.mapObjecttoOffiline(res.data);
             for (const item of mapObjectExternal) {
-                this.tableItems.add(item);
+                try {
+                    await this.tableItems.add(item);
+                }
+                catch(err) {}
             }
+
+            if(!res.data.pagination) {
+                this.totalRowsTable$.next(res.data.length);
+                this.totalImportaded$.next(res.data.length);
+                return;
+            }
+
+            this.totalRowsTable$.next(res.data.pagination.totalRowCount);
             this.totalImportaded$.next(mapObjectExternal.length);
 
             const options: HttpOptions = {
-              method: 'GET',
-              url: `${this.apiUrl}${this.endpoint}`,
+                method: 'GET',
+                url: `${this.apiUrl}${endpoint}`,
+                params: {}
             };
 
             const totalPages = Math.ceil(res.data.pagination.totalRowCount / res.data.pagination.pageSize);
             const limit = 5;
             const requests = [];
             for (let i = 2; i <= totalPages; i++) {
-              requests.push(
-                from(Http.request(Object.assign({}, options, {params: {page: `${i}`, per_page: '1000'}})))
+                const params = Object.assign({}, options.params, this.getFilters(...args), {page: `${i}`, per_page: '1000'});
+                requests.push(
+                from(Http.request(Object.assign({}, options, params)))
                     .pipe(
                         map (res => {
                             const mapObject = this.mapObjecttoOffiline(res);
@@ -134,17 +149,17 @@ export abstract class BaseService<T extends {id: number|string}> {
                             return res;
                         })
                     )
-              );
+                );
 
-              if(i >= limit) {
+                if(i >= limit) {
                 console.log('limit atingido!');
                 break;
-              }
+                }
             }
             forkJoin(requests).subscribe(
-              item => console.log(item)
+                item => console.log(item)
             )
-          });
+        });
 
     }
 
@@ -166,9 +181,31 @@ export abstract class BaseService<T extends {id: number|string}> {
         // }
     }
 
+    getFilters(...args: paramsRequest[]) {
+        let filters = {};
+        if (args && args.length && args[0].filters) {
+            const arrFilter = [];
+            for (const i of Object.keys(args[0].filters)) {
+                arrFilter.push(`${i}:${args[0].filters[i]}`);
+            }
+            filters = {'filter': arrFilter.join(';')};
+        }
+        return filters;
+    }
+
+    getEndpoint(...args: paramsRequest[]) {
+        let endpoint = this.endpoint;
+        if(endpoint.match(/aditionalId/) !== null) {
+            endpoint = endpoint.replace('{aditionalId}', `${args[0].aditionalId}`);
+        }
+
+        return endpoint;
+    }
+
     get(id?: string|number|null, ...args: paramsRequest[]): Observable<T> {
+        const endpoint = this.getEndpoint(...args);
         const options: HttpOptions = {
-            url: `${this.apiUrl}${this.endpoint}` + (id ? `/${id}` : ''),
+            url: `${this.apiUrl}${endpoint}` + (id ? `/${id}` : ''),
             params: {}
         };
 
@@ -183,8 +220,6 @@ export abstract class BaseService<T extends {id: number|string}> {
         if (args && args[0].query) {
             const arrQuery = [];
             for (const i of Object.keys(args[0].query)) {
-                // arrQuery.push(`${i}=${args[0].query[i]}`);
-                // debugger;
                 options.params = Object.assign({}, options.params, {[i]:args[0].query[i]});
             }
         }
@@ -198,18 +233,13 @@ export abstract class BaseService<T extends {id: number|string}> {
     }
 
     getAll(...args: paramsRequest[]): Observable<T[]> {
+        const endpoint = this.getEndpoint(...args);
         const options: HttpOptions = {
-            url: `${this.apiUrl}${this.endpoint}`,
+            url: `${this.apiUrl}${endpoint}`,
             params: {}
         };
 
-        if (args && args[0].filters) {
-            const arrFilter = [];
-            for (const i of Object.keys(args[0].filters)) {
-                arrFilter.push(`${i}:${args[0].filters[i]}`);
-            }
-            options.params = Object.assign({}, options.params, {'filter': arrFilter.join(';')});
-        }
+        options.params = Object.assign({}, options.params, this.getFilters());
 
         if (args && args[0].fakePayload) {
             const arrFilter = [];
@@ -222,8 +252,6 @@ export abstract class BaseService<T extends {id: number|string}> {
         if (args && args[0].query) {
             const arrQuery = [];
             for (const i of Object.keys(args[0].query)) {
-                // arrQuery.push(`${i}=${args[0].query[i]}`);
-                // debugger;
                 options.params = Object.assign({}, options.params, {[i]:args[0].query[i]});
             }
         }
