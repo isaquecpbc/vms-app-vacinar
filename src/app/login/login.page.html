@@ -23,6 +23,12 @@
           <div class="ion-padding">
             <ion-button size="large" type="submit" [disabled]="form.invalid" expand="block">Login</ion-button>
           </div>
+          <div class="ion-padding">
+            <ion-button size="large" type="button" expand="block" (goTo)="'network'">network</ion-button>
+          </div>
+          <div class="ion-padding">
+            <ion-button size="large" type="button" expand="block" (goTo)="'place'">place</ion-button>
+          </div>
         </ion-col>
       </ion-row>
     </ion-grid>

@@ -7,6 +7,7 @@ import Dexie, { Table } from 'dexie';
 import { Http, HttpOptions } from '@capacitor-community/http';
 import { from } from 'rxjs';
 import { HttpResponse } from "@capacitor/core";
+import { SQLiteService } from "./sqlite.service";
 
 export class filtersParamsRequest {
     [key: string]: string|number;
@@ -35,8 +36,10 @@ export abstract class BaseService<T extends {id: number|string}> {
     private tableItems!: Table<T, any>;
 
     protected http: HttpClient;
+    protected SQLiteService: SQLiteService;
     private statusConnection: ConnectionStatusService;
 
+    private plataforma: string | undefined = 'web';
     private isConnected = true;
     private apiUrl: string;
 
@@ -49,6 +52,7 @@ export abstract class BaseService<T extends {id: number|string}> {
         @Inject(String) protected endpoint: string,
     ) {
         this.http = this.injector.get(HttpClient);
+        this.SQLiteService = this.injector.get(SQLiteService);
         this.statusConnection = this.injector.get(ConnectionStatusService);
         this.apiUrl = environment.apiUrl;
 
@@ -65,6 +69,10 @@ export abstract class BaseService<T extends {id: number|string}> {
                     this.syncApi();
                 }
             });
+    }
+
+    getPlataforma() {
+        return this.SQLiteService.getPlatform();
     }
 
     iniciarIndexedDb() {
@@ -109,11 +117,14 @@ export abstract class BaseService<T extends {id: number|string}> {
         const _self = this;
         from(Http.request(options)).subscribe(async res => {
             const mapObjectExternal = this.mapObjecttoOffiline(res.data);
-            for (const item of mapObjectExternal) {
-                try {
-                    await this.tableItems.add(item);
+
+            if (this.getPlataforma() === 'web') {
+                for (const item of mapObjectExternal) {
+                    try {
+                        await this.tableItems.add(item);
+                    }
+                    catch(err) {}
                 }
-                catch(err) {}
             }
 
             if(!res.data.pagination) {
@@ -141,9 +152,12 @@ export abstract class BaseService<T extends {id: number|string}> {
                     .pipe(
                         map (res => {
                             const mapObject = this.mapObjecttoOffiline(res);
-                            for (const item of mapObject) {
-                                this.tableItems.add(item);
+                            if (this.getPlataforma() === 'web') {
+                                for (const item of mapObject) {
+                                    this.tableItems.add(item);
+                                }
                             }
+                            
                             this.totalImportaded$.next(+mapObject.length);
 
                             return res;

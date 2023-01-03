@@ -28,6 +28,14 @@ CREATE TABLE IF NOT EXISTS aplicacao (
 );
 `;
 
+export const createSchemaClinica: string = `
+CREATE TABLE IF NOT EXISTS clinica (
+  id INTEGER PRIMARY KEY NOT NULL,
+  razao TEXT NOT NULL,
+  updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+`;
+
 export const createSchemaProducts: string = `
 CREATE TABLE IF NOT EXISTS products (
   id INTEGER PRIMARY KEY NOT NULL,
@@ -59,6 +67,7 @@ export class MigrationService {
     await this.createTestTable();
     await this.createProductsTable();
     await this.createAplicacaoTable();
+    await this.createClinicaTable();
     await this.createAuthTable();
     await this.createLocalStorageTable();
   }
@@ -72,6 +81,12 @@ export class MigrationService {
   async createAplicacaoTable(): Promise<any> {
     await this.databaseService.executeQuery(async (db) => {
       await db.execute(createSchemaAplicacao);
+    });
+  }
+
+  async createClinicaTable(): Promise<any> {
+    await this.databaseService.executeQuery(async (db) => {
+      await db.execute(createSchemaClinica);
     });
   }
 

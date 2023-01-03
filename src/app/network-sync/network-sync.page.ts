@@ -61,14 +61,14 @@ export class NetworkSyncPage implements OnInit {
       message: 'Dismissing after 3 seconds...',
       duration: 3000,
     });
-
+/*
     this.aplicacaoService.salvarOffline({
       filters: {
         campanhaId: 127
       }
     });
     this.campanhasClinicasService.salvarOffline({aditionalId: 127});
-
+*/
     loading.present();
   }
 

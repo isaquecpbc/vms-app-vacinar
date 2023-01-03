@@ -76,4 +76,17 @@ export class LoginPage implements OnInit {
     this.showLoading = false
     await toast.present();
   }
+
+  goTo(page: string) {
+    switch(page) {
+      case 'network':
+        this.router.navigate(['/network-sync']);
+        break;
+      case 'place':
+        this.router.navigate(['/application-place']);
+        break;
+      default:
+        this.router.navigate(['/network-sync']);
+    }
+  }
 }
