@@ -17,9 +17,9 @@ export class DatabaseService {
    * @param databaseName optional another database name
    * @returns any type you want to receive from the callback function.
    */
-  async executeQuery<T>(callback: SQLiteDBConnectionCallback<T>, databaseName: string = environment.databaseName): Promise<T> {
+  async executeQuery<T>(callback: SQLiteDBConnectionCallback<T>, databaseName: string = environment.DB_NAME): Promise<T> {
     try {
-      let isConnection = await this.sqlite.isConnection(databaseName);
+      let isConnection = await this.sqlite.checkConnectionsConsistency();
 
       if (isConnection.result) {
         let db = await this.sqlite.retrieveConnection(databaseName);
@@ -32,9 +32,9 @@ export class DatabaseService {
         await this.sqlite.closeConnection(databaseName);
         return cb;
       }
-    } catch (error) {
-      throw Error(`DatabaseServiceError: ${error}`);
+    } catch (error: any) {
+      const errorMessage = error?.message || String(error);
+      throw Error(`DatabaseServiceError: ${errorMessage}`);
     }
   }
 }
-

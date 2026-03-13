@@ -13,4 +13,6 @@ export interface ParticipanteCombinated {
     participantePais: string;
     participanteSexo: string;
     participanteTipo: string;
+    participanteEmpresaId: string;
+    participanteDtNascimento: string;
 }

@@ -1,4 +1,4 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Inject, Injectable, Injector } from "@angular/core";
 import { forkJoin, map, Observable, Subject, tap } from "rxjs";
 import { ConnectionStatusService } from "./connection-status.service";
@@ -7,7 +7,9 @@ import Dexie, { Table } from 'dexie';
 import { Http, HttpOptions } from '@capacitor-community/http';
 import { from } from 'rxjs';
 import { HttpResponse } from "@capacitor/core";
-import { SQLiteService } from "./sqlite.service";
+import { ApiManagerService } from "./api-manager.service";
+import { CampanhasClinicasRepository } from "../repositories/campanhas-clinicas.repository";
+import { Clinica } from "../models/clinica.model";
 
 export class filtersParamsRequest {
     [key: string]: string|number;
@@ -36,10 +38,10 @@ export abstract class BaseService<T extends {id: number|string}> {
     private tableItems!: Table<T, any>;
 
     protected http: HttpClient;
-    protected SQLiteService: SQLiteService;
     private statusConnection: ConnectionStatusService;
+    private apiManager: ApiManagerService;
+    private clinicaRepository: CampanhasClinicasRepository;
 
-    private plataforma: string | undefined = 'web';
     private isConnected = true;
     private apiUrl: string;
 
@@ -52,8 +54,9 @@ export abstract class BaseService<T extends {id: number|string}> {
         @Inject(String) protected endpoint: string,
     ) {
         this.http = this.injector.get(HttpClient);
-        this.SQLiteService = this.injector.get(SQLiteService);
         this.statusConnection = this.injector.get(ConnectionStatusService);
+        this.apiManager = this.injector.get(ApiManagerService);
+        this.clinicaRepository = this.injector.get(CampanhasClinicasRepository);
         this.apiUrl = environment.apiUrl;
 
         this.ouvirStatusConexao();
@@ -69,10 +72,6 @@ export abstract class BaseService<T extends {id: number|string}> {
                     this.syncApi();
                 }
             });
-    }
-
-    getPlataforma() {
-        return this.SQLiteService.getPlatform();
     }
 
     iniciarIndexedDb() {
@@ -117,14 +116,11 @@ export abstract class BaseService<T extends {id: number|string}> {
         const _self = this;
         from(Http.request(options)).subscribe(async res => {
             const mapObjectExternal = this.mapObjecttoOffiline(res.data);
-
-            if (this.getPlataforma() === 'web') {
-                for (const item of mapObjectExternal) {
-                    try {
-                        await this.tableItems.add(item);
-                    }
-                    catch(err) {}
+            for (const item of mapObjectExternal) {
+                try {
+                    await this.tableItems.add(item);
                 }
+                catch(err) {}
             }
 
             if(!res.data.pagination) {
@@ -152,12 +148,9 @@ export abstract class BaseService<T extends {id: number|string}> {
                     .pipe(
                         map (res => {
                             const mapObject = this.mapObjecttoOffiline(res);
-                            if (this.getPlataforma() === 'web') {
-                                for (const item of mapObject) {
-                                    this.tableItems.add(item);
-                                }
+                            for (const item of mapObject) {
+                                this.tableItems.add(item);
                             }
-                            
                             this.totalImportaded$.next(+mapObject.length);
 
                             return res;
@@ -215,6 +208,40 @@ export abstract class BaseService<T extends {id: number|string}> {
 
         return endpoint;
     }
+/*
+      // add one user with statement
+      sqlcmd = `INSERT INTO users (name,email,age,size,company) VALUES ` +
+                                `("Brown","Brown@example.com",15,1.75,null)`;
+      ret = await db.run(sqlcmd);
+      if(ret.changes.lastId !== 4) {
+        return Promise.reject(new Error("Run 1 users with statement failed"));
+      }
+*/
+    saveOffLine(...args: paramsRequest[]): Promise<any> {
+        const endpoint = this.getEndpoint(...args);
+        const url =`${this.apiUrl}${endpoint}`;
+
+        return new Promise(async (resolve, reject) => {
+//            await this.clinicaRepository.clear();
+            const response = await this.apiManager.storeCallAndRespond('GET', url, '');
+            const aValues: Array<Clinica> = [];
+            response.data.map((item: any) => aValues.push(item as Clinica));
+            await this.clinicaRepository.bulkInsert(aValues);
+            console.log('response', response);
+            resolve(response);
+        });
+    }
+
+    getWorkaround(...args: paramsRequest[]): Promise<any> {
+        const endpoint = this.getEndpoint(...args);
+        const url =`${this.apiUrl}${endpoint}`;
+
+        return new Promise(async (resolve, reject) => {
+            const response = await
+            this.apiManager.storeCallAndRespond('GET', url, '');
+            resolve(response);
+        });
+    }
 
     get(id?: string|number|null, ...args: paramsRequest[]): Observable<T> {
         const endpoint = this.getEndpoint(...args);
@@ -250,7 +277,10 @@ export abstract class BaseService<T extends {id: number|string}> {
         const endpoint = this.getEndpoint(...args);
         const options: HttpOptions = {
             url: `${this.apiUrl}${endpoint}`,
-            params: {}
+            params: {},
+            headers: {timeout: `${60000}`}
+            // connectTimeout: 60000,
+            // readTimeout: 60000
         };
 
         options.params = Object.assign({}, options.params, this.getFilters());

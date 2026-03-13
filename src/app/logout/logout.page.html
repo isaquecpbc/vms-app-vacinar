@@ -1,0 +1,25 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>logout</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-progress-bar type="indeterminate" *ngIf="showLoading"></ion-progress-bar>
+
+  <h1>Realizando sincronização</h1>
+  <ion-list>
+    <br />
+    <ion-item color="secondary">
+      <span style="display: block;">Realizando a sincronização das aplicações</span>
+    </ion-item>
+    <br />
+    <ion-item color="warning" *ngIf="hasError">
+      <p>Houve um erro ao tentar fazer a sincronização, é necessário conectar o equipamento a uma rede WI-FI para realizar a sincronização</p>
+    </ion-item>
+
+    <div class="ion-padding" *ngIf="hasError">
+      <ion-button size="large" type="submit" (click)="close()" expand="block">Estou ciente</ion-button>
+    </div>
+  </ion-list>
+</ion-content>

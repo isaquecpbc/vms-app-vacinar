@@ -1,13 +1,17 @@
-import { APP_INITIALIZER, NgModule } from '@angular/core';
+import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
+
+import localePt from '@angular/common/locales/pt';
+import { registerLocaleData } from '@angular/common';
+registerLocaleData(localePt);
 
 import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { ComponentsModule } from './components/components.module';
-import { HttpClientJsonpModule, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientJsonpModule, HttpClientModule } from '@angular/common/http';
 import { IonicStorageModule } from '@ionic/storage-angular';
 import { Drivers } from '@ionic/storage';
 import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
@@ -19,6 +23,12 @@ import { InitializeAppService } from './services/initialize.app.service';
 import { ProductRepository } from './application/repositories/product.repository';
 import { AuthRepository } from './repositories/auth.repository';
 import { LocalStorageRepository } from './repositories/localstorage.repository';
+import { CampanhasClinicasRepository } from './repositories/campanhas-clinicas.repository';
+import { AplicacoesRepository } from './repositories/aplicacoes.repository';
+import { ApiManagerService } from './services/api-manager.service';
+import { StoredRequestRepository } from './repositories/stored-request.repository';
+import { DEFAULT_TIMEOUT, TimeoutInterceptor } from './services/timeout.interceptor';
+import { JwtInterceptor } from './interceptors/http-request.interceptor';
 
 export function initializeFactory(init: InitializeAppService) {
   return () => init.initializeApp();
@@ -36,7 +46,7 @@ export function initializeFactory(init: InitializeAppService) {
     AppRoutingModule,
     ComponentsModule,
     IonicStorageModule.forRoot({
-      name: 'vms-app',
+      name: 'vms-app-2',
       driverOrder: [Drivers.IndexedDB, Drivers.LocalStorage]
     })
   ],
@@ -50,7 +60,10 @@ export function initializeFactory(init: InitializeAppService) {
     ProductRepository,
     AuthRepository,
     LocalStorageRepository,
-
+    CampanhasClinicasRepository,
+    StoredRequestRepository,
+    AplicacoesRepository,
+    ApiManagerService,
     InitializeAppService,
     {
       provide: APP_INITIALIZER,
@@ -58,7 +71,13 @@ export function initializeFactory(init: InitializeAppService) {
       deps: [InitializeAppService],
       multi: true
     },
+    {
+      provide: LOCALE_ID, useValue: 'pt-BR'
+    },
+    [{ provide: HTTP_INTERCEPTORS, useClass: TimeoutInterceptor, multi: true }],
+    [{ provide: DEFAULT_TIMEOUT, useValue: 30000 }],
+    [{ provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }]
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }

@@ -1,15 +1,15 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
+  appId: 'br.com.vacinar.vms',
   appName: 'vms-app',
   webDir: 'www',
   bundledWebRuntime: false,
   server: {
     cleartext: true,
-    allowNavigation:[
+    allowNavigation: [
       "localhost:8100/*",
-      "191.252.178.7:8012/*",
+      "http://191.252.178.7:8012/*",
     ]
   }
 };

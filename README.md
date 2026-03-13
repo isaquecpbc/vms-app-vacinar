@@ -1,8 +1,9 @@
 # VMS App
 
+## Versao do java 17
 
 ## IONIC BUILD
-ionic build
+ionic build; npx cap copy; npx cap sync;
 
 ## Criando projeto Android
 npx cap add android
@@ -19,7 +20,19 @@ npx cap sync
 Incluir linha abaixo no AndroidManifest.xml
     android:usesCleartextTraffic="true"
 
+## Replace caracteres especiais
+[^a-zA-ZÀ-ÖØ-öø-ÿ',0-9\()\.\/\s-]
 
+## Editar arquivo
+- .android/gradle/wrapper/gradle-wrapper.properties
+# Deixar da seguinte forma
+android {
+    lintOptions {
+        baseline file("lint-baseline.xml")
+        abortOnError false
+        warningsAsErrors true
+    }
+}
 
 ## Getting started
 

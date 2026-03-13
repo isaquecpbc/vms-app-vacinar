@@ -11,15 +11,16 @@ export class ProductDefaultQueryRepositoryQQQ {
   }
 
   async getProducts(): Promise<Product[]> {
+    return [] as Product[];
     //create a connection and open
-    const db = await this.sqliteService.createConnection(environment.databaseName, false, "no-encryption", 1);
+    const db = await this.sqliteService.createConnection(environment.DB_NAME, false, "no-encryption", 1);
     await db.open();
 
     //do your queries
     var products: DBSQLiteValues = await db.query("select * from products");
 
     //close the connection
-    await this.sqliteService.closeConnection(environment.databaseName);
+    await this.sqliteService.closeConnection(environment.DB_NAME);
 
     //return the data
     return products.values as Product[];

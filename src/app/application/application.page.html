@@ -7,32 +7,135 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content color="light">
+  <div class="login-container">
+    <ion-progress-bar type="indeterminate" *ngIf="showLoading" class="progress-bar"></ion-progress-bar>
 
-  <ion-item>
-    <ion-label>
-      <h1 style="text-align: center;">Encontre o participante</h1>
-      <p>Pesquise por: Nome, Matricula, CPF ou Token</p>
-    </ion-label>
-  </ion-item>
+    <div class="login-wrapper">
+      <!-- Branding Section -->
+      <!-- <div class="branding-section"> -->
+      <div class="brand-content mt-2 mb-0">
+        <ion-card class="info-card">
+          <ion-card-content>
+            <div class="info-item">
+              <ion-icon name="business-outline"></ion-icon>
+              <div>
+                <strong>Local:</strong>
+                <p>{{oClinica ? oClinica.razao : 'Carregando...'}}</p>
+              </div>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+      <!-- </div> -->
 
-  <ion-searchbar [debounce]="1000" (ionChange)="handleChange($event)" placeholder="Pesquise o participante"></ion-searchbar>
+      <!-- Search Form Section -->
+      <div class="form-section">
+        <ion-card class="login-card">
+          <ion-card-header>
+            <ion-card-title class="login-title">Encontre o participante</ion-card-title>
+            <ion-card-subtitle class="login-subtitle">Pesquise por: CPF, Matricula ou Protocólo</ion-card-subtitle>
+          </ion-card-header>
 
-  <ion-progress-bar type="indeterminate" *ngIf="showLoading"></ion-progress-bar>
+          <ion-card-content>
+            <form [formGroup]="form">
+              <div class="form-fields">
+                <ion-item lines="none" class="input-item">
+                  <ion-label position="stacked">Pesquise</ion-label>
+                  <ion-input placeholder="Pesquise o participante" formControlName="search"
+                    (ionInput)="formatSearchCpf($event)">
+                  </ion-input>
+                </ion-item>
+              </div>
 
-  <ion-list>
-    <ion-item *ngIf="!results.length && !showLoading">
-      <ion-label>
-        <h1 style="text-align: center;">Nenhum resultado encontrado</h1>
-      </ion-label>
-    </ion-item>
-    <ion-item *ngFor="let result of results" (click)="apply(result.id, result.participanteNome)" [attr.disabled]="!!result.dtAplicacao || showLoading">
-      <ion-label>
-        <h1>{{ result.participanteNome }}</h1>
-        <p><b>MATRICULA:</b> {{ result.participanteCodigoExterno }} - <b>CPF:</b> {{ result.participanteCpf }}</p>
-      </ion-label>
-    </ion-item>
-  </ion-list>
+              <div class="button-container">
+                <ion-button size="large" type="button" color="secondary" expand="block" [disabled]="showLoading"
+                  (click)="handleChange()" class="login-button">
+                  <ion-icon slot="start" name="search-outline"></ion-icon>
+                  Pesquisar
+                </ion-button>
+              </div>
+            </form>
+
+            <!-- Results List -->
+            <div class="results-section" *ngIf="!showLoading">
+              <ion-list *ngIf="results.length">
+                <ion-item *ngFor="let result of results" (click)="apply(result.id, result.participanteNome)"
+                  [attr.disabled]="!!result.dtAplicacao || showLoading" button detail>
+                  <ion-label class="ion-text-wrap">
+                    <h2>{{ result.participanteNome }}</h2>
+                    <p><strong>Matricula:</strong> {{ result.participanteMatricula }}</p>
+                    <p><strong>CPF:</strong> {{ formatCpf(result.participanteCpf)}} - <strong>Tipo:</strong> {{
+                      result.participanteTipo }}</p>
+                    <p *ngIf="result.dtAplicacao"><strong>DT Aplicacao:</strong> {{ result.dtAplicacao }}</p>
+                    <p *ngIf="result.conveniadaRazaoAplicada"><strong>Empresa:</strong> {{ result.conveniadaId }} - {{
+                      result.conveniadaRazaoAplicada }}</p>
+                  </ion-label>
+                </ion-item>
+              </ion-list>
+
+              <ion-card *ngIf="!results.length" class="error-card">
+                <ion-card-content>
+                  <div style="text-align: center;">
+                    <ion-icon name="search-outline" style="font-size: 48px; color: var(--ion-color-medium);"></ion-icon>
+                    <h3>Nenhum resultado encontrado</h3>
+                    <p>Tente pesquisar com outros termos</p>
+                  </div>
+                </ion-card-content>
+              </ion-card>
+            </div>
+
+            <!-- Log Message -->
+            <div class="system-info" *ngIf="logMessage">
+              <div class="info-item">
+                <ion-icon name="information-circle-outline"></ion-icon>
+                <span>{{logMessage}}</span>
+              </div>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </div>
+  </div>
+
+  <!-- Protocol Modal -->
+  <ion-modal trigger="open-modal" (willDismiss)="onWillDismiss($event)">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-buttons slot="start">
+            <ion-button (click)="cancel()">Cancelar</ion-button>
+          </ion-buttons>
+          <ion-title>Protocolo</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="confirm()" [strong]="true">Aplicar</ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <ion-card class="login-card">
+          <ion-card-header>
+            <ion-card-title class="login-title">Realizar aplicação por protocolo</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="form-fields">
+              <ion-item lines="none" class="input-item">
+                <ion-label position="stacked">Insira o protocolo</ion-label>
+                <ion-input type="text" placeholder="Digite o protocolo" [(ngModel)]="name"></ion-input>
+              </ion-item>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <!-- Floating Action Button -->
+  <ion-fab vertical="bottom" horizontal="end">
+    <ion-fab-button id="open-modal" expand="block">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
 </ion-content>
 
 <app-footer></app-footer>

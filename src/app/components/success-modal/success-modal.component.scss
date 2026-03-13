@@ -1,0 +1,101 @@
+ .success-modal-content {
+     --background: #f5f4f0;
+ }
+
+ .success-container {
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+     justify-content: center;
+     min-height: 100%;
+     gap: 2rem;
+     padding: 1rem;
+     max-width: 500px;
+     margin: 0 auto;
+ }
+
+ .status-section {
+     text-align: center;
+     display: flex;
+     flex-direction: column;
+     align-items: center;
+
+     .icon-wrapper {
+         width: 100px;
+         height: 100px;
+         background: rgba(45, 211, 111, 0.1);
+         border-radius: 50%;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         margin-bottom: 1.5rem;
+         border: 8px solid rgba(45, 211, 111, 0.05);
+
+         .success-icon {
+             font-size: 60px;
+             color: #2dd36f;
+         }
+     }
+
+     .success-title {
+         font-size: 1.75rem;
+         font-weight: 800;
+         color: #1e2242;
+         margin: 0 0 0.5rem;
+     }
+
+     .success-subtitle {
+         font-size: 1rem;
+         color: #92949c;
+         margin: 0;
+         font-weight: 500;
+     }
+ }
+
+ .summary-card {
+     width: 100%;
+     margin: 0;
+     background: #ffffff;
+     border-radius: 16px;
+     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+
+     ion-card-content {
+         padding: 1.5rem;
+         display: flex;
+         flex-direction: column;
+         gap: 1.25rem;
+     }
+
+     .summary-item {
+         display: flex;
+         flex-direction: column;
+         gap: 0.25rem;
+
+         .label {
+             font-size: 0.65rem;
+             font-weight: 800;
+             color: #92949c;
+             letter-spacing: 0.05rem;
+         }
+
+         .value {
+             font-size: 1rem;
+             font-weight: 700;
+             color: #1e2242;
+             margin: 0;
+         }
+     }
+ }
+
+ .actions-section {
+     width: 100%;
+
+     .confirm-button {
+         --border-radius: 12px;
+         height: 56px;
+         font-weight: 700;
+         letter-spacing: 0.02rem;
+         margin: 0;
+         box-shadow: 0 4px 12px rgba(23, 119, 189, 0.2);
+     }
+ }

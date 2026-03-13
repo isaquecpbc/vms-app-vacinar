@@ -11,16 +11,17 @@ import { NativeStorage } from '@awesome-cordova-plugins/native-storage/ngx';
 })
 export class AppComponent implements OnInit {
   public appPages = [
-    { title: 'Local de Aplicação', url: '/application-place', icon: 'business' },
-    { title: 'Aplicar', url: '/application', icon: 'eyedrop' },
-    { title: 'Configurações', url: '/configuration', icon: 'construct' },
-    { title: 'Relatórios', url: '/folder/Inbox', icon: 'document-text' },
-    { title: 'Sair', url: '/login', icon: 'log-out' },
+    { title: 'Local de Aplicação', url: '/application-place', color: '', icon: 'business' },
+    { title: 'Aplicar', url: '/application', color: '', icon: 'eyedrop' },
+    // { title: 'Configurações', url: '/configuration', color: '', icon: 'construct' },
+    //    { title: 'Sincronização', url: '/network-sync', color: '', icon: 'swap-vertical' },
+    { title: 'Relatórios', url: '/reports', color: '', icon: 'document-text' },
+    { title: 'Sair / Sincronizar', url: '/logout', color: 'danger', icon: 'log-out' },
   ];
   public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
   public isLogged = false;
   public initPlugin = false;
-  private plataforma: string|undefined = 'web';
+  private plataforma: string | undefined = 'web';
 
   constructor(
     private authService: AuthIntegrationService,

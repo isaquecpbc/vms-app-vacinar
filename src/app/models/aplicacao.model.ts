@@ -10,6 +10,7 @@ export interface Aplicacao extends
     VacinaCombinated {
     id: number;
     dose: number;
+    loteId: number;
     dtAplicacao: string;
     dtAplicacao2: string;
     dtAplicacaoFormated: string;
@@ -22,5 +23,7 @@ export interface Aplicacao extends
     conveniadaRazaoAplicada: string;
     conveniadaUfAplicada: string;
     conveniadaId2: number;
+    profissionalId: number;
+    empresaId: number;
 }
 

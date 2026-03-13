@@ -10,21 +10,53 @@
 <ion-content>
   <ion-item>
     <ion-label>
-      <h1>Locais de Aplicação</h1>
-      <p><b>Progresso:</b> {{totalImportadoAplicacao}} / {{totalRowsTableAplicacao}}</p>
+      <h1>Ultima Sincronização</h1>
+      <p>{{lastDtSync | date:'short'}}</p>
     </ion-label>
-    <ion-spinner name="bubbles" *ngIf="totalImportadoAplicacao !== totalRowsTableAplicacao"></ion-spinner>
   </ion-item>
+
   <ion-item>
     <ion-label>
-      <h1>Participantes</h1>
-      <p><b>Progresso:</b> {{totalImportadoClinica}} / {{totalRowsTableClinica}}</p>
+      <h1>Número do Patrimonio</h1>
+      <p>{{storagePatrimonio}}</p>
     </ion-label>
-    <ion-spinner name="bubbles" *ngIf="totalImportadoClinica !== totalRowsTableClinica"></ion-spinner>
   </ion-item>
-  <ion-button class="ion-padding" expand="block"
-    (click)="next()"
-    [disabled]="!((totalImportadoClinica === totalRowsTableClinica) && (totalImportadoAplicacao === totalRowsTableAplicacao))">
-    Seguir
-  </ion-button>
+
+  <ion-item>
+    <ion-label>
+      <h1>Verificação do banco</h1>
+    </ion-label>
+    <ion-spinner name="bubbles" *ngIf="!verifyLocalDB && !finishProcess"></ion-spinner>
+    <ion-icon name="checkmark-outline" *ngIf="verifyLocalDB"></ion-icon>
+    <ion-icon name="close-outline" *ngIf="!verifyLocalDB && finishProcess"></ion-icon>
+  </ion-item>
+
+  <ion-item>
+    <ion-label>
+      <h1>Enviando registros para o servidor</h1>
+    </ion-label>
+    <ion-spinner name="bubbles" *ngIf="!finishProcess || !verifySendChanges"></ion-spinner>
+    <ion-icon name="checkmark-outline" *ngIf="verifySendChanges"></ion-icon>
+    <!-- <ion-icon name="close-outline" *ngIf="!finishProcess"></ion-icon> -->
+  </ion-item>
+
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+        <ion-button size="large" expand="block"
+          (click)="next()"
+          [disabled]="!(verifyLocalDB && !hasError)">
+          Seguir
+        </ion-button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-item>
+        <ion-label>LOG de sincronização</ion-label>
+        <pre>{{log}}</pre>
+      </ion-item>
+    </ion-row>
+  </ion-grid>
 </ion-content>
+
+<!-- <app-footer></app-footer> -->

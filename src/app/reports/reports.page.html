@@ -1,0 +1,63 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Relatórios ({{getDateBr()}})</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <form [formGroup]="form">
+    <ion-item>
+      <ion-label class="ion-padding">Selecione a data</ion-label>
+      <ion-select expand="block" label="Stacked label" formControlName="dateFilter">
+        <ion-select-option *ngFor="let item of oDates" [attr.value]="item">{{item}}</ion-select-option>
+      </ion-select>
+      <ion-button size="large" type="button" color="secondary" expand="block" (click)="changeDate()">
+        <ion-icon name="search-outline"></ion-icon>
+      </ion-button>
+    </ion-item>
+  </form>
+
+  <ion-list>
+    <ion-item>
+      <span style="display: block;width: 79%"><b>Total aplicado hoje:</b></span>
+      <span style="display: block;width: 29%;text-align: right">{{totalToday && totalToday.length ? totalAplicado : 0}}</span>
+    </ion-item>
+    <ion-list lines="inset" *ngIf="totalAplicado > 0">
+      <ion-item *ngFor="let item of totalToday">
+        <ion-label>
+          <h3>{{item.banco}}</h3>
+          <p>{{item.unidade}}</p>
+          <p><b>CEP:</b> {{item.cep}}, <b>Número:</b> {{item.numero}}</p>
+          <p>Total aplicados: <b>{{item.total}}</b></p>
+        </ion-label>
+      </ion-item>
+    </ion-list>
+    <ion-item>
+      <span style="display: block;width: 79%"><b>Total por protocólo:</b></span>
+      <span style="display: block;width: 29%;text-align: right">{{totalToken && totalToken.length ? totalToken[0].total : 0}}</span>
+    </ion-item>
+    <ion-item color="secondary" *ngIf="totalNaoSincronizado > 0">
+      <span style="display: block;width: 79%"><b>Total não sincronizados:</b></span>
+      <span style="display: block;width: 29%;text-align: right">{{totalNaoSincronizado}}</span>
+    </ion-item>
+    <ion-item color="warning" *ngIf="totalFail > 0">
+      <span style="display: block;width: 79%"><b>Total de erros de sincronização:</b></span>
+      <span style="display: block;width: 29%;text-align: right">{{totalFail}}</span>
+    </ion-item>
+  </ion-list> 
+
+  <ion-list *ngIf="totalClinicas && totalClinicas.length">
+    <ion-list-header>
+      <ion-label>Total por clinica:</ion-label>
+    </ion-list-header>
+    <ion-item *ngFor="let item of totalClinicas" >
+      <span style="display: block;width: 79%"><b>{{item.razao}}</b></span>
+      <span style="display: block;width: 29%;text-align: right">{{item.total}}</span>
+    </ion-item>
+  </ion-list>  
+
+</ion-content>

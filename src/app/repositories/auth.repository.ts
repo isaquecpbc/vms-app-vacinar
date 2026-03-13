@@ -1,101 +1,86 @@
-
-import { DBSQLiteValues, SQLiteDBConnection } from '@capacitor-community/sqlite';
 import { Injectable } from '@angular/core';
-// import productsData from './products-data-example';
-import { DatabaseService } from 'src/app/services/database.service';
-import { Product } from 'src/app/models/Product';
+import { environment } from 'src/environments/environment';
+import { SQLiteService } from '../services/sqlite.service';
 import { Auth } from '../models/auth.model';
+
 @Injectable()
 export class AuthRepository {
-  constructor(private _databaseService: DatabaseService) {
+
+  constructor(private _sqlite: SQLiteService) { }
+
+  /** Abre conexão com o banco correto (environment.DB_NAME),
+   * reaproveitando conexão existente se houver. */
+  private async getConnection() {
+    const isConnection = await this._sqlite.checkConnectionsConsistency();
+    if (isConnection.result) {
+      return this._sqlite.retrieveConnection(environment.DB_NAME);
+    }
+    const db = await this._sqlite.createConnection(environment.DB_NAME, false, 'no-encryption', 1);
+    if (db == null) throw new Error('AuthRepository: falha ao criar conexão com o banco');
+    await db.open();
+    return db;
   }
 
   async getAll(): Promise<Auth[]> {
-    return this._databaseService.executeQuery<any>(async (db: SQLiteDBConnection) => {
-      var products: DBSQLiteValues = await db.query("select * from auth");
-      return products.values as Auth[];
-    });
-  }
-
-  async create(table: Auth): Promise<Auth> {
-    return this._databaseService.executeQuery<any>(async (db: SQLiteDBConnection) => {
-      let sqlcmd: string = "insert into auth (login, nome, token) values (?, ?, ?)";
-      let values: Array<any> = [table.login, table.nome, table.token];
-      console.log('(sqlcmd, values)', sqlcmd, values);
-      let ret: any = await db.run(sqlcmd, values);
-      if (ret.changes.lastId > 0) {
-        console.log('ret.changes', ret);
-        return ret.changes as Auth;
-      }
-      throw Error('create auth failed');
-    });
-  }
-
-  async update(product: Product) {
-    // return this._databaseService.executeQuery<any>(async (db: SQLiteDBConnection) => {
-    //   let sqlcmd: string = "update products set name = ?, description = ?, price = ?, imageUrl = ?, isAvailable = ?, isPopular = ?, category = ? where id = ?";
-    //   let values: Array<any> = [product.name, product.description, product.price, product.imageUrl, product.isAvailable, product.isPopular, product.category, product.id];
-    //   let ret: any = await db.run(sqlcmd, values);
-    //   if (ret.changes.changes > 0) {
-    //     return await this.getById(product.id);
-    //   }
-    //   throw Error('update product failed');
-    // });
+    try {
+      const db = await this.getConnection();
+      const result = await db.query('SELECT * FROM auth');
+      await this._sqlite.closeConnection(environment.DB_NAME);
+      return (result.values ?? []) as Auth[];
+    } catch (err) {
+      return Promise.reject(err);
+    }
   }
 
   async getById(login: string): Promise<Auth> {
-    return this._databaseService.executeQuery<any>(async (db: SQLiteDBConnection) => {
-      let sqlcmd: string = "select * from auth where login = ? limit 1";
-      let values: Array<any> = [login];
-      let ret: any = await db.query(sqlcmd, values);
-      console.log('ret', ret);
-      if (ret.values.length > 0) {
-        return ret.values[0] as Auth;
+    try {
+      const db = await this.getConnection();
+      const result = await db.query('SELECT * FROM auth WHERE login = ? LIMIT 1', [login]);
+      console.log('[AuthRepository] getById result:', JSON.stringify(result));
+      await this._sqlite.closeConnection(environment.DB_NAME);
+      if (result.values && result.values.length > 0) {
+        return result.values[0] as Auth;
       }
-      throw Error('get Auth by id failed');
-    });
+      throw new Error(`AuthRepository: usuário '${login}' não encontrado`);
+    } catch (err) {
+      return Promise.reject(err);
+    }
   }
 
-  async deleteById(id: number): Promise<void> {
-    return this._databaseService.executeQuery<any>(async (db: SQLiteDBConnection) => {
-      await db.query(`delete from auth where login = ${id};`);
-    });
+  async create(auth: Auth): Promise<Auth> {
+    try {
+      const db = await this.getConnection();
+      const sqlcmd = 'INSERT OR REPLACE INTO auth (login, nome, token, password) VALUES (?, ?, ?, ?)';
+      const values = [auth.login, auth.nome, auth.token ?? '', auth.password ?? ''];
+      console.log('[AuthRepository] create:', sqlcmd, values);
+      const ret: any = await db.run(sqlcmd, values);
+      await this._sqlite.closeConnection(environment.DB_NAME);
+      if (ret.changes.lastId > 0) {
+        return ret.changes as Auth;
+      }
+      throw new Error('AuthRepository: falha ao criar registro auth');
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  }
+
+  async deleteById(login: string): Promise<void> {
+    try {
+      const db = await this.getConnection();
+      await db.query('DELETE FROM auth WHERE login = ?', [login]);
+      await this._sqlite.closeConnection(environment.DB_NAME);
+    } catch (err) {
+      return Promise.reject(err);
+    }
   }
 
   async clear(): Promise<void> {
-    await this._databaseService.executeQuery<any>(async (db: SQLiteDBConnection) => {
-      //delete all products
-      let sqlcmd: string = "DELETE FROM auth;";
-      await db.execute(sqlcmd, false);
-    });
-  }
-
-  // async getProductsByCategory(category: string): Promise<Product[]> {
-  //   return this._databaseService.executeQuery<any>(async (db: SQLiteDBConnection) => {
-  //     let sqlcmd: string = "select * from products where category = ?";
-  //     let values: Array<any> = [category];
-  //     let ret: any = await db.query(sqlcmd, values);
-  //     if (ret.values.length > 0) {
-  //       return ret.values as Product[];
-  //     }
-  //     throw Error('get products by category failed');
-  //   });
-  // }
-
-  async createTestData(): Promise<any> {
-    // await this._databaseService.executeQuery<any>(async (db: SQLiteDBConnection) => {
-    //   //delete all products
-    //   let sqlcmd: string = "DELETE FROM products;";
-    //   await db.execute(sqlcmd, false);
-    // });
-
-    // let products: Product[] = productsData;
-
-    // for (let product of products) {
-      // await this.createProduct(product);
-    // }
-
-    await this.create({login: 'admin', 'nome': 'admin'} as Auth);
-
+    try {
+      const db = await this.getConnection();
+      await db.execute('DELETE FROM auth;', false);
+      await this._sqlite.closeConnection(environment.DB_NAME);
+    } catch (err) {
+      return Promise.reject(err);
+    }
   }
 }

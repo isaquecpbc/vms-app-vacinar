@@ -1,0 +1,45 @@
+<ion-content class="ion-padding success-modal-content">
+    <div class="success-container">
+        <!-- Header/Icon Section -->
+        <div class="status-section">
+            <div class="icon-wrapper">
+                <ion-icon name="checkmark-circle" class="success-icon"></ion-icon>
+            </div>
+            <h1 class="success-title">Aplicação Registrada!</h1>
+            <p class="success-subtitle">{{ mensagem }}</p>
+        </div>
+
+        <!-- Summary Section -->
+        <ion-card class="summary-card">
+            <ion-card-content>
+                <div class="summary-item">
+                    <span class="label">PARTICIPANTE</span>
+                    <p class="value">{{ participanteNome }}</p>
+                </div>
+
+                <div class="summary-item" *ngIf="lote">
+                    <span class="label">LOTE / VACINA</span>
+                    <p class="value">{{ lote }}</p>
+                </div>
+
+                <div class="summary-item">
+                    <span class="label">DATA / HORA</span>
+                    <p class="value">{{ dataHora | date:'dd/MM/yyyy HH:mm' }}</p>
+                </div>
+
+                <div class="summary-item" *ngIf="profissional">
+                    <span class="label">RESPONSÁVEL</span>
+                    <p class="value">{{ profissional }}</p>
+                </div>
+            </ion-card-content>
+        </ion-card>
+
+        <!-- Footer Actions -->
+        <div class="actions-section">
+            <ion-button expand="block" color="secondary" (click)="dismiss()" class="confirm-button">
+                <ion-icon slot="start" name="checkmark-outline"></ion-icon>
+                OK, CONTINUAR
+            </ion-button>
+        </div>
+    </div>
+</ion-content>

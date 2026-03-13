@@ -22,12 +22,12 @@ export class FooterComponent implements OnInit {
   }
 
   async ngOnInit() {
-    Network.addListener('networkStatusChange', status => {
-      console.log('Network status changed', status);
-      this.networkStatus = status;
-    });
+    // Network.addListener('networkStatusChange', status => {
+    //   // console.log('Network status changed', status);
+    //   this.networkStatus = status;
+    // });
 
-    this.networkStatus = await Network.getStatus();
+    // this.networkStatus = await Network.getStatus();
   }
 
   private ouvirStatusConexao() {

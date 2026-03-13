@@ -1,0 +1,48 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Digite o CEP do local de aplicação</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-progress-bar type="indeterminate" *ngIf="showLoading"></ion-progress-bar>
+  <ion-grid>
+    <!-- <ion-item>
+      <ion-label>Port</ion-label>
+      <ionic-selectable
+        [(ngModel)]="port"
+        [items]="ports"
+        itemValueField="id"
+        itemTextField="name"
+        [canSearch]="true"
+        (onChange)="portChange($event)">
+      </ionic-selectable>
+    </ion-item> -->
+    <!-- <ion-item>
+      <ion-label>
+        <h1 style="text-align: center;">Selecione o banco abaixo</h1>
+      </ion-label>
+    </ion-item> -->
+    <ion-row color="light" class="ion-justify-content-center ion-align-items-center" style="margin-top: .9em;">
+      <ion-col align-self-center size-md="6" size-lg="5" size-xs="12">
+        <ion-label>Selecione o CEP do local de aplicação</ion-label>
+        <ionic-selectable
+          [(ngModel)]="port"
+          [items]="unidades"
+          itemValueField="id"
+          itemTextField="cep"
+          [canSearch]="true"
+          (onChange)="portChange($event)">
+        </ionic-selectable>
+      </ion-col>
+    </ion-row>
+    <!-- <ion-row color="light" class="ion-justify-content-center ion-align-items-center" style="margin-top: .9em;">
+      <ion-col align-self-center size-md="6" size-lg="5" size-xs="12">
+          <ion-select placeholder="Selecione o banco" expand="block">
+            <ion-select-option>Selecione</ion-select-option>
+            <ion-select-option *ngFor="let item of clinicas" [attr.value]="item.id">{{item.razao}}</ion-select-option>
+          </ion-select>
+      </ion-col>
+    </ion-row> -->
+  </ion-grid>
+</ion-content>

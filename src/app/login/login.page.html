@@ -1,38 +1,98 @@
-<ion-content color="light" padding>
-  <form #form="ngForm" (ngSubmit)="login(formUser.value, formPassword.value)">
-    <ion-progress-bar type="indeterminate" *ngIf="showLoading"></ion-progress-bar>
-    <ion-grid>
-      <ion-row color="light" class="ion-justify-content-center ion-align-items-center">
-        <ion-col align-self-center size-md="6" size-lg="5" size-xs="12">
-          <figure style="text-align: center;">
-            <img src="https://storage.builderall.com//franquias/2/6477146/editor-html/9784172.png" />
-          </figure>
-          <div>
-            <h3 class="text-center">Login</h3>
-          </div>
-          <div padding>
-            <ion-item>
-              <ion-input name="email" type="text" placeholder="Usuário"
-                ngModel required #formUser="ngModel"></ion-input>
-            </ion-item>
-            <ion-item>
-              <ion-input name="password" type="password" placeholder="Senha"
-                ngModel required #formPassword="ngModel"></ion-input>
-            </ion-item>
-          </div>
-          <div class="ion-padding">
-            <ion-button size="large" type="submit" [disabled]="form.invalid" expand="block">Login</ion-button>
-          </div>
-          <div class="ion-padding">
-            <ion-button size="large" type="button" expand="block" (goTo)="'network'">network</ion-button>
-          </div>
-          <div class="ion-padding">
-            <ion-button size="large" type="button" expand="block" (goTo)="'place'">place</ion-button>
-          </div>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-  </form>
-</ion-content>
+<ion-content color="light">
+  <div class="login-container">
+    <ion-progress-bar type="indeterminate" *ngIf="showLoading" class="progress-bar"></ion-progress-bar>
 
-<app-footer></app-footer>
+    <div class="login-wrapper">
+      <!-- Branding Section -->
+      <div class="branding-section">
+        <div class="brand-content">
+          <figure class="logo-container">
+            <img style="margin: auto;" src="assets/logo.png" alt="Logo" />
+          </figure>
+          <h1 class="welcome-title">Bem-vindo</h1>
+          <p class="welcome-subtitle">Sistema de Gerenciamento VMS</p>
+        </div>
+      </div>
+
+      <!-- Login Form Section -->
+      <div class="form-section">
+        <ion-card class="login-card">
+          <ion-card-header>
+            <ion-card-title class="login-title">Login</ion-card-title>
+            <ion-card-subtitle class="login-subtitle">Acesse sua conta</ion-card-subtitle>
+          </ion-card-header>
+
+          <ion-card-content>
+            <form #form="ngForm" (ngSubmit)="login(formUser.value, formPassword.value)">
+              <div class="form-fields">
+                <ion-item lines="none" class="input-item">
+                  <ion-label position="stacked">Usuário</ion-label>
+                  <ion-input name="email" type="text" placeholder="Digite seu usuário" ngModel required
+                    #formUser="ngModel">
+                  </ion-input>
+                </ion-item>
+
+                <ion-item lines="none" class="input-item">
+                  <ion-label position="stacked">Senha</ion-label>
+                  <ion-input name="password" type="password" placeholder="Digite sua senha" ngModel required
+                    #formPassword="ngModel">
+                  </ion-input>
+                </ion-item>
+              </div>
+
+              <div class="button-container">
+                <ion-button size="large" type="submit" [disabled]="form.invalid" expand="block" class="login-button">
+                  <!-- <ion-button size="large" type="submit" [disabled]="form.invalid || !!databaseOK" expand="block" class="login-button"> -->
+                  Entrar
+                </ion-button>
+              </div>
+
+              <!-- Error Alert Card -->
+              <!-- <ion-card color="danger" *ngIf="!databaseOK && !showLoading" class="error-card">
+                <ion-card-header>
+                  <ion-card-title>Alerta!</ion-card-title>
+                  <ion-card-subtitle>Banco não sincronizado</ion-card-subtitle>
+                </ion-card-header>
+                <ion-card-content>
+                  Feche o aplicativo e tente novamente. Caso já tenha feito isso, entre em contato com o administrador
+                  do sistema.
+                </ion-card-content>
+              </ion-card> -->
+            </form>
+          </ion-card-content>
+        </ion-card>
+        <!-- <div class="button-container" style="display: none;">
+          <ion-button size="large" type="button" expand="block" class="login-button" (click)="gotTo('application')">
+            Aplicacao
+          </ion-button>
+          <ion-button size="large" type="button" expand="block" class="login-button"
+            (click)="gotTo('application-place')">
+            Aplicacao Local
+          </ion-button>
+        </div> -->
+
+        <!-- System Information -->
+        <div class="system-info">
+          <div class="info-item">
+            <ion-icon name="information-circle-outline"></ion-icon>
+            <span>Versão: {{envFRONT.versionAPP}}</span>
+          </div>
+          <div class="info-item" *ngIf="numeroPatrimonio.length">
+            <ion-icon name="laptop-outline"></ion-icon>
+            <span>Patrimônio: {{numeroPatrimonio}}</span>
+          </div>
+          <div class="info-item" *ngIf="lastLogin.length">
+            <ion-icon name="time-outline"></ion-icon>
+            <span>Último Login: {{lastLogin}}</span>
+          </div>
+        </div>
+
+        <!-- Debug Log (Collapsible) -->
+        <details class="debug-section" *ngIf="logString && logString !== 'Inicio!'">
+          <summary>Informações de Depuração</summary>
+          <pre class="debug-log">{{logString}}</pre>
+        </details>
+      </div>
+    </div>
+  </div>
+</ion-content>

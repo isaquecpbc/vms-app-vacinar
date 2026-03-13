@@ -2,7 +2,6 @@ import { Injectable, Injector } from '@angular/core';
 import { BaseService, paramsRequest } from './base.service';
 import { HttpResponse } from '@capacitor/core';
 import { Clinica } from '../models/clinica.model';
-import { CampanhasClinicasRepository } from '../repositories/campanhas-clinicas.repository';
 
 @Injectable({
   providedIn: 'root'
@@ -10,8 +9,7 @@ import { CampanhasClinicasRepository } from '../repositories/campanhas-clinicas.
 export class CampanhasClinicasService extends BaseService<Clinica> {
 
   constructor(
-    protected override injector: Injector,
-    private clinicaRepository: CampanhasClinicasRepository 
+    protected override injector: Injector
   ) {
     super(injector, 'clinica', '/v2/campanhas/{aditionalId}/clinicas');
   }
@@ -19,32 +17,16 @@ export class CampanhasClinicasService extends BaseService<Clinica> {
   mapObjecttoOffiline(values: HttpResponse): Clinica[] {
     let result: Array<Clinica> = [];
     if (Array.isArray(values)) {
-      values.map((item: any) => { 
-        const obj = {
-          id: item['id'],
-          razao: item['razao'],
-        } as Clinica;
-
-        if (this.getPlataforma() !== 'web') {
-          this.clinicaRepository.create(obj).then(() => console.log('CREATED NEW AUTH'));
-        }
-
-        result.push(obj);
-      });
+      values.map((item: any) => result.push({
+        id: item['id'],
+        razao: item['razao'],
+      } as Clinica));
     }
     else {
-      values.data.map((item: any) => { 
-        const obj = {
-          id: item['id'],
-          razao: item['razao'],
-        } as Clinica;
-
-        if (this.getPlataforma() !== 'web') {
-          this.clinicaRepository.create(obj).then(() => console.log('CREATED NEW AUTH'));
-        }
-
-        result.push(obj);
-      });
+      values.data.map((item: any) => result.push({
+        id: item['id'],
+        razao: item['razao'],
+      } as Clinica));
     }
 
     return result;

@@ -1,4 +1,3 @@
-
 import { DBSQLiteValues, SQLiteDBConnection } from '@capacitor-community/sqlite';
 import { Injectable } from '@angular/core';
 import { DatabaseService } from 'src/app/services/database.service';

@@ -21,15 +21,15 @@ export class ConfigurationPage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.aplicacaoService.totalRowsTable.subscribe(
-      item => this.totalRowsTable = item
-    );
-    this.aplicacaoService.totalImportaded.subscribe(
-      item => {
-        this.totalImportado += item;
-        this.updateProgress();
-      }
-    )
+    // this.aplicacaoService.totalRowsTable.subscribe(
+    //   item => this.totalRowsTable = item
+    // );
+    // this.aplicacaoService.totalImportaded.subscribe(
+    //   item => {
+    //     this.totalImportado += item;
+    //     this.updateProgress();
+    //   }
+    // )
   }
 
   updateProgress() {
@@ -38,7 +38,7 @@ export class ConfigurationPage implements OnInit {
 
   changeOffline(ev: any) {
     if (ev.detail.checked) {
-      this.aplicacaoService.salvarOffline();
+      // this.aplicacaoService.salvarOffline();
     }
   }
 

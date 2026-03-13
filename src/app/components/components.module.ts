@@ -2,16 +2,19 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { FooterComponent } from './footer/footer.component';
+import { SuccessModalComponent } from './success-modal/success-modal.component';
 
 @NgModule({
   declarations: [
-    FooterComponent
+    FooterComponent,
+    SuccessModalComponent
   ],
   exports: [
-    FooterComponent
+    FooterComponent,
+    SuccessModalComponent
   ],
   imports: [
-    IonicModule.forRoot(), 
+    IonicModule.forRoot(),
     CommonModule
   ]
 })

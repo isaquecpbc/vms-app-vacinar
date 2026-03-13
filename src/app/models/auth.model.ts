@@ -1,9 +1,11 @@
 export interface Auth {
+    statusCode: any;
     id: string;
     login?: string;
-    password?:string;
-    system?:string;
-    campanhaId?:string;
+    password?: string;
+    system?: string;
+    campanhaId?: string;
+    usuarioId?: string;
     empresaId?: string;
     conveniadaId?: string;
     nome?: string;

@@ -1,0 +1,11 @@
+.alert-wrapper {
+    width: 40% !important;
+    max-width: 40% !important;
+}
+
+@media only screen and (max-width: 600px) {
+    .alert-wrapper {
+        width: 90% !important;
+        max-width: 90% !important;
+    }    
+}

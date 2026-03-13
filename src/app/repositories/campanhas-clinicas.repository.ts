@@ -1,13 +1,12 @@
-
-import { DBSQLiteValues, SQLiteDBConnection } from '@capacitor-community/sqlite';
+import { capSQLiteSet, DBSQLiteValues, SQLiteDBConnection } from '@capacitor-community/sqlite';
 import { Injectable } from '@angular/core';
 import { DatabaseService } from 'src/app/services/database.service';
-import { Aplicacao } from '../models/aplicacao.model';
 import { Clinica } from '../models/clinica.model';
+import { SQLiteService } from '../services/sqlite.service';
 
 @Injectable()
 export class CampanhasClinicasRepository {
-  constructor(private _databaseService: DatabaseService) {
+  constructor(private sqliteService: SQLiteService, private _databaseService: DatabaseService) {
   }
 
   async getAll(): Promise<Clinica[]> {
@@ -17,7 +16,7 @@ export class CampanhasClinicasRepository {
     });
   }
 
-  getTimestampInSeconds () {
+  getTimestampInSeconds() {
     return Math.floor(Date.now() / 1000);
   }
 
@@ -70,4 +69,14 @@ export class CampanhasClinicasRepository {
       await db.execute(sqlcmd, false);
     });
   }
+
+  async bulkInsert(values: Array<Clinica>) {
+    this._databaseService.executeQuery<any>(async (db: SQLiteDBConnection) => {
+      let sqlcmd: string = "insert into clinica (id, razao) VALUES ";
+      const aValues: Array<string> = [];
+      values.map(i => aValues.push(`(${i.id}, "${i.razao}")`));
+      await db.run(sqlcmd + aValues.join(','));
+    });
+  }
+
 }
