@@ -1,0 +1,31 @@
+*/5 * * * * root /usr/local/bin/php /var/www/html/app/cli.php reports-process generate >> /var/www/html/data/geracao-relatorios-generate.log 2>&1
+*/5 * * * * root /usr/local/bin/php /var/www/html/app/cli.php main upload participantes >> /var/www/html/data/upload-participantes.log 2>&1
+*/5 * * * * root /usr/local/bin/php /var/www/html/app/cli.php reports-process process pathIn=/var/www/html/data/sshfs-reports >> /var/www/html/data/geracao-relatorios.log 2>&1
+
+### Sincronização de aplicações
+*/5 * * * * root /usr/local/bin/php /var/www/html/app/cli.php main matchAplicacoes >> /var/www/html/data/match-aplicacoes.log 2>&1
+
+### INTEGRAÇÃO SESI
+
+# 1) Cascata SESI a cada 6 horas (00, 06, 12, 18), com intervalo de 5 minutos entre etapas
+# 00:00 -> matchCampanhas
+# 00:05 -> loadPlantas
+# 00:10 -> loadParticipantes
+0 */6 * * * root /usr/local/bin/php /var/www/html/app/cli.php sesi matchCampanhas >> /var/www/html/data/sesi_matchCampanhas.log 2>&1
+5 */6 * * * root /usr/local/bin/php /var/www/html/app/cli.php sesi loadPlantas >> /var/www/html/data/sesi_loadPlantas.log 2>&1
+10 */6 * * * root /usr/local/bin/php /var/www/html/app/cli.php sesi loadParticipantes >> /var/www/html/data/sesi_loadParticipantes.log 2>&1
+
+# 2) Envio para SESI (POST) a cada 30 minutos, escalonado em 5 minutos
+# xx:20 e xx:50 -> sendAgendamentos
+# xx:25 e xx:55 -> sendAplicacoes
+20,50 * * * * root /usr/local/bin/php /var/www/html/app/cli.php sesi sendAgendamentos >> /var/www/html/data/sesi_sendAgendamentos.log 2>&1
+25,55 * * * * root /usr/local/bin/php /var/www/html/app/cli.php sesi sendAplicacoes >> /var/www/html/data/sesi_sendAplicacoes.log 2>&1
+
+# 3) Match de nomes para saneamento (pesado): manter baixa frequencia
+40 3 * * 1 root /usr/local/bin/php /var/www/html/app/cli.php sesi matchNomes >> /var/www/html/data/sesi_matchNomes.log 2>&1
+
+# Observacao importante:
+# addParticipantesSesiSgc e fluxo legado de importacao em lote estao expostos em SesiOldTask
+# (acoes matchAgendamentosByFile/matchCampanhaSesi). Nao recomendado em cron recorrente sem
+# arquivo de entrada controlado.
+

@@ -1,0 +1,128 @@
+version: '3.8'
+
+
+
+services:
+  sgc-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: sgc_app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    env_file:
+      - ../.env
+    environment:
+      - APP_ENV=development
+      - PHP_MEMORY_LIMIT=256M
+      # Override local para usar o serviço Memcached do docker-compose
+      - MEMCACHED_HOST=memcached
+    volumes:
+      - ../:/var/www/html
+      - ../data:/var/www/html/data
+      - php_socket:/var/run/php-fpm
+    expose:
+      - 9000
+    depends_on:
+      - mysql
+      - postgres-sce
+      - memcached
+    networks:
+      - sgc-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+
+  sgc-nginx:
+    image: nginx:1.21-alpine
+    container_name: sgc_nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ../:/var/www/html
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/ssl:/etc/nginx/ssl
+      - php_socket:/var/run/php-fpm
+      - ../data/logs:/var/log/nginx
+    depends_on:
+      - sgc-app
+    networks:
+      - sgc-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # redis:
+  #   image: redis:7-alpine
+  #   container_name: sgc_redis
+  #   restart: unless-stopped
+  #   command: ["redis-server", "--appendonly", "no"]
+  #   expose:
+  #     - "6379"
+  #   networks:
+  #     - sgc-network
+
+  mysql:
+    image: mysql:8.0
+    container_name: sgc_mysql
+    restart: unless-stopped
+    command: ["--default-authentication-plugin=mysql_native_password"]
+    environment:
+      - MYSQL_DATABASE=vacinar_sgc
+      - MYSQL_USER=cp-dev-ops
+      - MYSQL_PASSWORD=X}5l_9}*ucgcVz)P
+      - MYSQL_ROOT_PASSWORD=X}5l_9}*ucgcVz)P
+    expose:
+      - "3306"
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - sgc-network
+
+  postgres-sce:
+    image: postgres:14-alpine
+    container_name: sgc_postgres_sce
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=sce_producao
+      - POSTGRES_USER=cp-dev-ops
+      - POSTGRES_PASSWORD=@G_^Ue4]NP#8hRTH
+    expose:
+      - "5432"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_sce_data:/var/lib/postgresql/data
+    networks:
+      - sgc-network
+
+  memcached:
+    image: memcached:1.6-alpine
+    container_name: sgc_memcached
+    restart: unless-stopped
+    command: ["memcached", "-m", "64", "-p", "11211", "-u", "nobody"]
+    expose:
+      - "11211"
+    networks:
+      - sgc-network
+
+volumes:
+  php_socket:
+    driver: local
+  mysql_data:
+    driver: local
+  postgres_sce_data:
+    driver: local
+
+networks:
+  sgc-network:
+    driver: bridge
